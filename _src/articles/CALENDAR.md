@@ -10,10 +10,10 @@ The weekly article task takes the first topic marked `next` (or the first `plann
 | 4 | Late objection? How condonation and extensions work | sars-disputes | published |
 | 5 | Tax clearance (TCS) PIN for tenders: why it shows non-compliant | business-tax | published |
 | 6 | SARS tax debt compromise: who qualifies and what SARS asks for | tax-debt | published |
-| 7 | EMP501 reconciliation: fixing mismatches before SARS does | payroll | next |
-| 8 | CSD registration step by step for small businesses | business-compliance | planned |
-| 9 | Request for remission of penalties: when it works | sars-disputes | planned |
-| 10 | Travel logbook requirements SARS accepts | individual-tax | planned |
+| 7 | EMP501 reconciliation: fixing mismatches before SARS does | payroll | published |
+| 8 | CSD registration step by step for small businesses | business-compliance | published |
+| 9 | Request for remission of penalties: when it works | sars-disputes | published |
+| 10 | Travel logbook requirements SARS accepts | individual-tax | next |
 | 11 | CIPC annual returns: deadlines and penalties | business-compliance | planned |
 | 12 | When must a business register for VAT? | vat | planned |
 | 13 | Ceasing South African tax residency: what it means and what SARS needs | expat-tax | planned |

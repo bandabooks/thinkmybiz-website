@@ -1,7 +1,7 @@
 {
  "/": {
   "date": "2026-11-20",
-  "hash": "9255924670f7029ab7d2c654671d52d7"
+  "hash": "f846daf5c79f4ad7c157433ed7b28acb"
  },
  "/about/": {
   "date": "2026-11-20",
@@ -53,31 +53,43 @@
  },
  "/insights/": {
   "date": "2026-11-20",
-  "hash": "d905550e4251c3f0ff0b1fad48d71abd"
+  "hash": "053d6579fa9342c5c41de9e407ae615a"
+ },
+ "/insights/csd-registration-step-by-step/": {
+  "date": "2026-11-20",
+  "hash": "971b001301da8c6f3eb57831499ba78d"
+ },
+ "/insights/emp501-reconciliation-mismatches/": {
+  "date": "2026-11-20",
+  "hash": "49d664133256cef772b64c25b34a9666"
  },
  "/insights/how-to-object-to-a-sars-assessment/": {
   "date": "2026-11-20",
-  "hash": "49e3dd96d9f6d7d8df009bea579aa1a9"
+  "hash": "9760323972284be1577845d17d2da30a"
  },
  "/insights/late-sars-objection-condonation/": {
   "date": "2026-11-20",
-  "hash": "52077a51958e23932e02594ea5daffca"
+  "hash": "eba6ca8f5a3f89cd85f6119932f8b571"
  },
  "/insights/sars-letter-of-demand-options/": {
   "date": "2026-11-20",
-  "hash": "0ddcdd7a18a70e010795909c352d6060"
+  "hash": "e61820f2ec7e2b59a9cf0525f8af1f8f"
+ },
+ "/insights/sars-penalty-remission-request/": {
+  "date": "2026-11-20",
+  "hash": "090b3d4d7fcebe278d2763a542c4eb32"
  },
  "/insights/sars-tax-debt-compromise/": {
   "date": "2026-11-20",
-  "hash": "44560ab0869f944cb7e8823f5e320de7"
+  "hash": "c9146f2667315a7f7acd698c64b9d0c3"
  },
  "/insights/sars-verification-letter-what-to-do/": {
   "date": "2026-11-20",
-  "hash": "155d6a75887d3e742981a5832b2d2b81"
+  "hash": "b3f6cd3c06eb3152f5d973bba83e242d"
  },
  "/insights/tax-compliance-status-pin-tenders/": {
   "date": "2026-11-20",
-  "hash": "4976a9e3ec5ec2cf17576d3fcab668e4"
+  "hash": "4bd1f083419641babf9baa9f8de5fe7c"
  },
  "/privacy/": {
   "date": "2026-11-20",
@@ -105,7 +117,7 @@
  },
  "/services/business-compliance/": {
   "date": "2026-11-20",
-  "hash": "da10922bbb796bda08e761f4bab3e87c"
+  "hash": "a23b900d313743316ef28578648ce719"
  },
  "/services/business-tax/": {
   "date": "2026-11-20",
@@ -129,11 +141,11 @@
  },
  "/services/payroll/": {
   "date": "2026-11-20",
-  "hash": "11f948de806ad217d63d5d625625c19f"
+  "hash": "345884c069cb5641e5853ba256dd33f2"
  },
  "/services/sars-disputes/": {
   "date": "2026-11-20",
-  "hash": "cbddf4fe37f7d6707f190a42634131b2"
+  "hash": "688156cfb000061d220ab881428e8a1d"
  },
  "/services/tax-debt/": {
   "date": "2026-11-20",
