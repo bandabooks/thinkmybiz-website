@@ -23,6 +23,7 @@
   f.addEventListener("submit", function (e) {
     e.preventDefault();
     ok.style.display = "none"; err.style.display = "none";
+    if (!f.checkValidity()) { f.reportValidity(); return; }
     var d = new FormData(f), b = f.querySelector("button[type=submit]");
     b.disabled = true; b.textContent = "Sending…";
     fetch("/contact.php", { method: "POST", body: d, headers: { "Accept": "application/json" } })

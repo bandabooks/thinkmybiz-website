@@ -11,10 +11,6 @@ function out($code, $arr) { http_response_code($code); echo json_encode($arr); e
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') out(405, ['ok' => false, 'error' => 'Method not allowed.']);
 
-// Spam checks: honeypot field must be empty; form must take at least 3 seconds to complete.
-if (!empty($_POST['company_website'])) out(200, ['ok' => true]);
-$ts = isset($_POST['ts']) ? (int)$_POST['ts'] : 0;
-if ($ts > 0 && (round(microtime(true) * 1000) - $ts) < 3000) out(200, ['ok' => true]);
 
 function clean($k, $max) {
   $v = isset($_POST[$k]) ? trim((string)$_POST[$k]) : '';
@@ -32,6 +28,12 @@ $consent  = !empty($_POST['consent']);
 if ($name === '' || $message === '') out(422, ['ok' => false, 'error' => 'Please give your name and a short message.']);
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) out(422, ['ok' => false, 'error' => 'Please enter a valid email address.']);
 if (!$consent) out(422, ['ok' => false, 'error' => 'Please confirm that we may use your details to respond.']);
+
+// Spam checks run only after the real validation, so a person is never shown a false "sent".
+// Honeypot must be empty; a submission under 2 seconds after page load is treated as automated.
+if (!empty($_POST['hp_check'])) out(422, ['ok' => false, 'error' => 'Your message could not be sent. Please email accounts@thinkmybiz.co.za or call 066 210 5631.']);
+$ts = isset($_POST['ts']) ? (int)$_POST['ts'] : 0;
+if ($ts > 0 && (round(microtime(true) * 1000) - $ts) < 2000) out(422, ['ok' => false, 'error' => 'Please take a moment to check your details, then send again.']);
 
 // Single-line header values only.
 $name1 = preg_replace('/[\n]+/', ' ', $name);

@@ -547,15 +547,15 @@ contact = hero("Contact", "Book a free consultation",
   "Tell us what you need, or send us the SARS or compliance notice you have received. We will assess the work and reply with an agreed scope.",
   [("Home", "/"), ("Contact", None)], actions=False) + f"""
 <section class="section"><div class="container grid g2" style="gap:40px;align-items:start;grid-template-columns:1.25fr 1fr">
-<div class="card"><form id="enquiry" class="form" action="/contact.php" method="post" novalidate>
+<div class="card"><form id="enquiry" class="form" action="/contact.php" method="post">
 <div class="two"><div><label for="f-name">Full name *</label><input id="f-name" name="name" required autocomplete="name"></div>
 <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div></div>
 <div class="two"><div><label for="f-email">Email *</label><input id="f-email" name="email" type="email" required autocomplete="email"></div>
 <div><label for="f-loc">Province or town</label><input id="f-loc" name="location" placeholder="e.g. Pretoria, Gauteng"></div></div>
 <div><label for="f-svc">How can we help?</label><select id="f-svc" name="service"><option value="General enquiry">General enquiry</option>{opts}</select></div>
 <div><label for="f-msg">Your message *</label><textarea id="f-msg" name="message" required placeholder="Briefly describe what you need. For a SARS matter, include the type of notice, the tax type and period, and the date you received it. Please do not attach ID numbers or sensitive documents here."></textarea></div>
-<label style="display:flex;gap:10px;font-weight:500;font-size:.88rem;align-items:flex-start"><input type="checkbox" name="consent" value="1" required style="width:auto;margin-top:3px"> I agree that Think Mybiz may use these details to respond to my enquiry, as described in the <a href="/privacy/">privacy notice</a>.</label>
-<input class="hp" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true"><input type="hidden" name="ts" value="">
+<label class="consent"><input type="checkbox" name="consent" value="1" required><span>I agree that Think Mybiz may use these details to respond to my enquiry, as described in the <a href="/privacy/">privacy notice</a>. *</span></label>
+<div class="hp" aria-hidden="true"><label for="f-hp">Leave this field empty</label><input id="f-hp" name="hp_check" tabindex="-1" autocomplete="new-password"></div><input type="hidden" name="ts" value="">
 <button class="btn btn-primary" type="submit" style="justify-content:center">Send enquiry</button>
 <p id="enquiry-ok" class="notice" style="display:none">Thank you. Your enquiry has been sent to {EMAIL}. We will be in touch.</p>
 <p id="enquiry-err" class="notice err" style="display:none"></p>
