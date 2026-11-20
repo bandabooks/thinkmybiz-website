@@ -1,7 +1,7 @@
 {
  "/": {
   "date": "2026-11-20",
-  "hash": "444d1d2a7ca2e5ad111f2aa38a2f7cc9"
+  "hash": "d3edd685f548b2eee8ac92310fc6f176"
  },
  "/about/": {
   "date": "2026-11-20",
@@ -50,6 +50,14 @@
  "/industries/transport-logistics/": {
   "date": "2026-11-20",
   "hash": "e04e7b26a15d571edeb2f801e0b3a3b8"
+ },
+ "/insights/": {
+  "date": "2026-11-20",
+  "hash": "e8deed3f38f2b69c995b7396b164af3b"
+ },
+ "/insights/sars-letter-of-demand-options/": {
+  "date": "2026-11-20",
+  "hash": "9909450ed2bb50d090057204cc9c4050"
  },
  "/privacy/": {
   "date": "2026-11-20",
@@ -109,7 +117,7 @@
  },
  "/services/tax-debt/": {
   "date": "2026-11-20",
-  "hash": "561f47a555268d955658a04827982e49"
+  "hash": "210db09bf4136477263fd66d44d5610a"
  },
  "/services/tax-planning/": {
   "date": "2026-11-20",
