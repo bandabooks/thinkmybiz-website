@@ -16,5 +16,9 @@ The weekly article task takes the first topic marked `next` (or the first `plann
 | 10 | Travel logbook requirements SARS accepts | individual-tax | planned |
 | 11 | CIPC annual returns: deadlines and penalties | business-compliance | planned |
 | 12 | When must a business register for VAT? | vat | planned |
+| 13 | Ceasing South African tax residency: what it means and what SARS needs | expat-tax | planned |
+| 14 | Working abroad: the foreign employment income exemption explained | expat-tax | planned |
+| 15 | Six internal controls every small business should have | internal-controls | planned |
+| 16 | Moving your books online: what changes and what to prepare | digital-finance | planned |
 
 Seasonal rule: ahead of SARS filing season, provisional tax due dates and the EMP501 windows, move the matching topic up, with dates checked on sars.gov.za for that year.
