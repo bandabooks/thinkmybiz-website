@@ -1,7 +1,7 @@
 {
  "/": {
   "date": "2026-11-20",
-  "hash": "9e1bc5b6554d50b78a37707e385540c1"
+  "hash": "ec650510f82ca65df7e10070e8cdb46d"
  },
  "/about/": {
   "date": "2026-11-20",
@@ -30,6 +30,14 @@
  "/how-we-work/": {
   "date": "2026-11-20",
   "hash": "bacd8ad91de2a4fa260cb59c16fb7761"
+ },
+ "/insights/": {
+  "date": "2026-11-20",
+  "hash": "e8deed3f38f2b69c995b7396b164af3b"
+ },
+ "/insights/sars-letter-of-demand-options/": {
+  "date": "2026-11-20",
+  "hash": "9909450ed2bb50d090057204cc9c4050"
  },
  "/privacy/": {
   "date": "2026-11-20",
@@ -77,7 +85,7 @@
  },
  "/services/tax-debt/": {
   "date": "2026-11-20",
-  "hash": "8f53cd0db3555e2a5c9401651ba2bc97"
+  "hash": "3a6b4797942426d5ccddab49db36919b"
  },
  "/services/tax-planning/": {
   "date": "2026-11-20",
