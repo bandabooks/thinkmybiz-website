@@ -282,6 +282,7 @@ TOWNS = {
  "Northern Cape": ["Kimberley", "Upington", "Kakamas", "Kathu", "Kuruman", "Postmasburg", "Springbok", "De Aar",
    "Colesberg", "Calvinia"],
 }
+OTHER_TOWN = "Other town or village"
 OUTSIDE_SA = "Outside South Africa"
 
 AREAS = [("Gauteng", "Johannesburg, Pretoria (Tshwane), Midrand, Centurion, Sandton, Ekurhuleni and the West Rand"),
@@ -576,19 +577,19 @@ page("/service-areas/", "Accountants in Johannesburg, Pretoria, Midrand, Polokwa
 
 # ------------------------------------------------------------------ CONTACT
 opts = "".join(f'<option value="{s["slug"]}">{s["short"]}</option>' for s in SERVICES)
-prov_opts = "".join(f'<option value="{p}"></option>' for p in TOWNS) + f'<option value="{OUTSIDE_SA}"></option>'
+prov_opts = "".join(f'<option>{p}</option>' for p in TOWNS) + f'<option>{OUTSIDE_SA}</option>'
 wa_item = (f'<div class="contact-item">{icon("phone")}<div><small>WhatsApp</small><a href="{wa_link()}">{WA_DISPLAY}</a></div></div>' if WHATSAPP else "") + f'<div class="contact-item">{icon("phone")}<div><small>Cell</small><a href="tel:{MTEL}">{MOBILE}</a></div></div>'
 contact = hero("Contact", "Book a free consultation",
   "Tell us what you need, or send us the SARS or compliance notice you have received. We will assess the work and reply with an agreed scope.",
   [("Home", "/"), ("Contact", None)], actions=False) + f"""
 <section class="section"><div class="container grid g2" style="gap:40px;align-items:start;grid-template-columns:1.25fr 1fr">
-<div class="card"><form id="enquiry" class="form" action="/contact.php" method="post">
+<div class="card"><form id="enquiry" class="form" action="/contact.php" method="post" novalidate>
 <div class="two"><div><label for="f-name">Full name *</label><input id="f-name" name="name" required autocomplete="name"></div>
 <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div></div>
 <div class="two"><div><label for="f-email">Email *</label><input id="f-email" name="email" type="email" required autocomplete="email"></div>
-<div><label for="f-prov">Province *</label><input id="f-prov" name="province" list="prov-list" required autocomplete="off" placeholder="Type or select your province" data-towns='{E(json.dumps(TOWNS))}' data-outside="{OUTSIDE_SA}"><datalist id="prov-list">{prov_opts}</datalist></div></div>
-<div><label for="f-town" id="f-town-label">Town or village</label><input id="f-town" name="town" list="town-list" maxlength="80" autocomplete="off" placeholder="Select your province first, then type to search" disabled><datalist id="town-list"></datalist>
-<small id="f-town-help">Not in the list? Just type your town or village.</small></div>
+<div><label for="f-prov">Province *</label><select id="f-prov" name="province" required data-towns='{E(json.dumps(TOWNS))}' data-other="{OTHER_TOWN}" data-outside="{OUTSIDE_SA}"><option value="">Select your province</option>{prov_opts}</select></div></div>
+<div class="two"><div id="town-wrap"><label for="f-town">Town or village</label><select id="f-town" name="town" disabled><option value="">Select a province first</option></select></div>
+<div id="other-wrap" hidden><label for="f-other" id="f-other-label">Your town or village</label><input id="f-other" name="town_other" maxlength="80" placeholder="Type your town or village"></div></div>
 <div><label for="f-svc">How can we help?</label><select id="f-svc" name="service"><option value="General enquiry">General enquiry</option>{opts}</select></div>
 <div><label for="f-msg">Your message *</label><textarea id="f-msg" name="message" required placeholder="Briefly describe what you need. For a SARS matter, include the type of notice, the tax type and period, and the date you received it. Please do not attach ID numbers or sensitive documents here."></textarea></div>
 <label class="consent"><input type="checkbox" name="consent" value="1" required><span>I agree that Think Mybiz may use these details to respond to my enquiry, as described in the <a href="/privacy/">privacy notice</a>. *</span></label>
