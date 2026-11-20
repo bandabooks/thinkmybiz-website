@@ -21,13 +21,20 @@ function clean($k, $max) {
 $name     = clean('name', 120);
 $email    = clean('email', 160);
 $phone    = clean('phone', 40);
-$location = clean('location', 120);
+$province = clean('province', 40);
+$town     = clean('town', 80);
+$town_oth = clean('town_other', 80);
+$PROVINCES = ['Gauteng', 'Limpopo', 'Mpumalanga', 'North West', 'KwaZulu-Natal', 'Western Cape', 'Eastern Cape',
+              'Free State', 'Northern Cape', 'Outside South Africa'];
+if ($town === 'Other town or village' || $province === 'Outside South Africa') $town = $town_oth;
+$town = preg_replace('/[\n]+/', ' ', $town);
 $service  = clean('service', 120);
 $message  = clean('message', 5000);
 $consent  = !empty($_POST['consent']);
 
 if ($name === '' || $message === '') out(422, ['ok' => false, 'error' => 'Please give your name and a short message.']);
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) out(422, ['ok' => false, 'error' => 'Please enter a valid email address.']);
+if (!in_array($province, $PROVINCES, true)) out(422, ['ok' => false, 'error' => 'Please select your province.']);
 if (!$consent) out(422, ['ok' => false, 'error' => 'Please confirm that we may use your details to respond.']);
 
 // Spam checks run only after the real validation, so a person is never shown a false "sent".
@@ -42,7 +49,7 @@ $serv1 = preg_replace('/[\n]+/', ' ', $service ?: 'General enquiry');
 
 $subject = 'Website enquiry: ' . $serv1 . ' — ' . $name1;
 $body = "New enquiry from thinkmybiz.co.za\n\n"
-      . "Name: $name1\nEmail: $email\nPhone: $phone\nProvince/town: $location\nService: $serv1\n"
+      . "Name: $name1\nEmail: $email\nPhone: $phone\nProvince: $province\nTown/village: $town\nService: $serv1\n"
       . "Received: " . date('Y-m-d H:i') . " (SAST)\n\nMessage:\n$message\n\n"
       . "The sender consented to their details being used to respond to this enquiry (POPIA).\n";
 

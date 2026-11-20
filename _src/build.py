@@ -252,6 +252,39 @@ SERVICES = [
 ]
 SVC = {s["slug"]: s for s in SERVICES}
 
+# ------------------------------------------------------------------ provinces and towns (contact form drop-downs)
+# Main towns per province; every province also offers "Other town or village" with a free-text box.
+TOWNS = {
+ "Gauteng": ["Johannesburg", "Soweto", "Sandton", "Randburg", "Roodepoort", "Midrand", "Alexandra", "Diepsloot",
+   "Pretoria", "Centurion", "Soshanguve", "Mabopane", "Ga-Rankuwa", "Mamelodi", "Atteridgeville", "Hammanskraal",
+   "Cullinan", "Bronkhorstspruit", "Germiston", "Kempton Park", "Tembisa", "Benoni", "Boksburg", "Brakpan", "Springs",
+   "Alberton", "Edenvale", "Krugersdorp", "Randfontein", "Vereeniging", "Vanderbijlpark", "Meyerton", "Heidelberg"],
+ "Limpopo": ["Mokopane", "Mahwelereng", "Polokwane", "Seshego", "Mankweng", "Lebowakgomo", "Modimolle", "Mookgophong",
+   "Bela-Bela", "Thabazimbi", "Northam", "Lephalale", "Senwabarwana", "Alldays", "Makhado (Louis Trichardt)", "Musina",
+   "Thohoyandou", "Malamulele", "Elim", "Giyani", "Tzaneen", "Modjadjiskloof", "Phalaborwa", "Hoedspruit",
+   "Burgersfort", "Jane Furse", "Groblersdal", "Marble Hall"],
+ "Mpumalanga": ["Mbombela (Nelspruit)", "White River", "Hazyview", "KaNyamazane", "Barberton", "Malelane", "Komatipoort",
+   "Bushbuckridge", "Sabie", "Mashishing (Lydenburg)", "eMalahleni (Witbank)", "Middelburg", "Secunda", "Ermelo",
+   "Standerton", "Bethal", "eMkhondo (Piet Retief)", "Delmas", "KwaMhlanga", "Siyabuswa", "eMakhazeni (Belfast)", "Volksrust"],
+ "North West": ["Rustenburg", "Phokeng", "Mogwase", "Brits", "Hartbeespoort", "Mahikeng", "Lichtenburg", "Zeerust",
+   "Klerksdorp", "Potchefstroom", "Wolmaransstad", "Koster", "Vryburg", "Taung", "Christiana", "Bloemhof", "Schweizer-Reneke"],
+ "KwaZulu-Natal": ["Durban", "Umhlanga", "Pinetown", "Umlazi", "Chatsworth", "Ballito", "KwaDukuza (Stanger)",
+   "Pietermaritzburg", "Howick", "Richards Bay", "Empangeni", "Mtubatuba", "Eshowe", "Ulundi", "Newcastle", "Ladysmith",
+   "Dundee", "Vryheid", "Estcourt", "Port Shepstone", "Margate", "Kokstad"],
+ "Western Cape": ["Cape Town", "Bellville", "Khayelitsha", "Mitchells Plain", "Somerset West", "Stellenbosch", "Paarl",
+   "Wellington", "Malmesbury", "Worcester", "Hermanus", "Swellendam", "George", "Mossel Bay", "Knysna", "Oudtshoorn",
+   "Saldanha", "Vredenburg", "Beaufort West"],
+ "Eastern Cape": ["Gqeberha (Port Elizabeth)", "Kariega (Uitenhage)", "Jeffreys Bay", "East London", "Qonce (King William's Town)",
+   "Mthatha", "Butterworth", "Komani (Queenstown)", "Makhanda (Grahamstown)", "Port Alfred", "Graaff-Reinet", "Cradock",
+   "Aliwal North", "Mount Frere", "Lusikisiki"],
+ "Free State": ["Bloemfontein", "Botshabelo", "Thaba Nchu", "Welkom", "Virginia", "Odendaalsrus", "Kroonstad", "Bothaville",
+   "Sasolburg", "Parys", "Bethlehem", "Harrismith", "Phuthaditjhaba (QwaQwa)", "Ficksburg"],
+ "Northern Cape": ["Kimberley", "Upington", "Kakamas", "Kathu", "Kuruman", "Postmasburg", "Springbok", "De Aar",
+   "Colesberg", "Calvinia"],
+}
+OTHER_TOWN = "Other town or village"
+OUTSIDE_SA = "Outside South Africa"
+
 AREAS = [("Gauteng", "Johannesburg, Pretoria (Tshwane), Midrand, Centurion, Sandton, Ekurhuleni and the West Rand"),
          ("Limpopo", "Mokopane (head office), Polokwane, Mookgophong, Modimolle, Bela-Bela, Lephalale, Thohoyandou and Tzaneen"),
          ("Mpumalanga", "Mbombela, eMalahleni, Middelburg, Secunda"),
@@ -544,6 +577,7 @@ page("/service-areas/", "Accountants in Johannesburg, Pretoria, Midrand, Polokwa
 
 # ------------------------------------------------------------------ CONTACT
 opts = "".join(f'<option value="{s["slug"]}">{s["short"]}</option>' for s in SERVICES)
+prov_opts = "".join(f'<option>{p}</option>' for p in TOWNS) + f'<option>{OUTSIDE_SA}</option>'
 wa_item = (f'<div class="contact-item">{icon("phone")}<div><small>WhatsApp</small><a href="{wa_link()}">{WA_DISPLAY}</a></div></div>' if WHATSAPP else "") + f'<div class="contact-item">{icon("phone")}<div><small>Cell</small><a href="tel:{MTEL}">{MOBILE}</a></div></div>'
 contact = hero("Contact", "Book a free consultation",
   "Tell us what you need, or send us the SARS or compliance notice you have received. We will assess the work and reply with an agreed scope.",
@@ -553,7 +587,9 @@ contact = hero("Contact", "Book a free consultation",
 <div class="two"><div><label for="f-name">Full name *</label><input id="f-name" name="name" required autocomplete="name"></div>
 <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div></div>
 <div class="two"><div><label for="f-email">Email *</label><input id="f-email" name="email" type="email" required autocomplete="email"></div>
-<div><label for="f-loc">Province or town</label><input id="f-loc" name="location" placeholder="e.g. Pretoria, Gauteng"></div></div>
+<div><label for="f-prov">Province *</label><select id="f-prov" name="province" required data-towns='{E(json.dumps(TOWNS))}' data-other="{OTHER_TOWN}" data-outside="{OUTSIDE_SA}"><option value="">Select your province</option>{prov_opts}</select></div></div>
+<div class="two"><div id="town-wrap"><label for="f-town">Town or village</label><select id="f-town" name="town" disabled><option value="">Select a province first</option></select></div>
+<div id="other-wrap" hidden><label for="f-other" id="f-other-label">Your town or village</label><input id="f-other" name="town_other" maxlength="80" placeholder="Type your town or village"></div></div>
 <div><label for="f-svc">How can we help?</label><select id="f-svc" name="service"><option value="General enquiry">General enquiry</option>{opts}</select></div>
 <div><label for="f-msg">Your message *</label><textarea id="f-msg" name="message" required placeholder="Briefly describe what you need. For a SARS matter, include the type of notice, the tax type and period, and the date you received it. Please do not attach ID numbers or sensitive documents here."></textarea></div>
 <label class="consent"><input type="checkbox" name="consent" value="1" required><span>I agree that Think Mybiz may use these details to respond to my enquiry, as described in the <a href="/privacy/">privacy notice</a>. *</span></label>
@@ -579,7 +615,7 @@ page("/contact/", "Contact Think Mybiz Accountants | Free Consultation | 066 210
 priv = hero("Privacy", "Privacy &amp; POPIA notice", "How this website handles personal information.", [("Home", "/"), ("Privacy", None)], actions=False) + f"""
 <section class="section"><div class="container content" style="max-width:820px">
 <p>{BRAND} ({E(LEGAL)}) respects your privacy and processes personal information in line with the Protection of Personal Information Act, 2013 (POPIA).</p>
-<h2>What we collect through this website</h2><p>When you send an enquiry, we receive the details you choose to give us: your name, email address, phone number, location, the service you are interested in and your message. The enquiry is sent by email to {EMAIL}; the website does not store it in a database.</p>
+<h2>What we collect through this website</h2><p>When you send an enquiry, we receive the details you choose to give us: your name, email address, phone number, province and town, the service you are interested in and your message. The enquiry is sent by email to {EMAIL}; the website does not store it in a database.</p>
 <h2>How we use it</h2><p>We use your information only to respond to your enquiry, prepare a quotation and, if you engage us, deliver the agreed services and meet our legal and professional obligations. We do not sell your personal information.</p>
 <h2>Sensitive information</h2><p>Please do not send identity numbers, tax reference numbers or supporting documents through the website form. Ask us for a secure route for sensitive documents.</p>
 <h2>Client information</h2><p>Client information is handled with professional confidentiality. Access and authority to act with SARS and other authorities are arranged through the applicable taxpayer and practitioner processes.</p>
