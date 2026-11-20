@@ -1,7 +1,7 @@
 {
  "/": {
   "date": "2026-11-20",
-  "hash": "ec650510f82ca65df7e10070e8cdb46d"
+  "hash": "444d1d2a7ca2e5ad111f2aa38a2f7cc9"
  },
  "/about/": {
   "date": "2026-11-20",
@@ -25,19 +25,31 @@
  },
  "/contact/": {
   "date": "2026-11-20",
-  "hash": "18a5129fb85e02563ec2d6a80fd6e40b"
+  "hash": "68eebe12d458c78d8d0ada452fa9f355"
  },
  "/how-we-work/": {
   "date": "2026-11-20",
   "hash": "bacd8ad91de2a4fa260cb59c16fb7761"
  },
- "/insights/": {
+ "/industries/": {
   "date": "2026-11-20",
-  "hash": "e8deed3f38f2b69c995b7396b164af3b"
+  "hash": "75d38ca0cd380c51b0b3d9770965395d"
  },
- "/insights/sars-letter-of-demand-options/": {
+ "/industries/construction/": {
   "date": "2026-11-20",
-  "hash": "9909450ed2bb50d090057204cc9c4050"
+  "hash": "cfa3ada589fca81ac1c79d0c374be167"
+ },
+ "/industries/nonprofits/": {
+  "date": "2026-11-20",
+  "hash": "0240f09e8b892cee292a48db48f098bb"
+ },
+ "/industries/security/": {
+  "date": "2026-11-20",
+  "hash": "059b5e68fefa6fd7f861e2bd99a76bc2"
+ },
+ "/industries/transport-logistics/": {
+  "date": "2026-11-20",
+  "hash": "e04e7b26a15d571edeb2f801e0b3a3b8"
  },
  "/privacy/": {
   "date": "2026-11-20",
@@ -53,46 +65,58 @@
  },
  "/services/": {
   "date": "2026-11-20",
-  "hash": "ca878413504714e0635294276e3ba6d8"
+  "hash": "e1680e9a08f9d9c9b803214b499851eb"
  },
  "/services/accounting/": {
   "date": "2026-11-20",
-  "hash": "ad0d987ec871cd7301f0d009d1059064"
+  "hash": "7ce70f91b3ced8da8f5aadc273ddd703"
  },
  "/services/business-advisory/": {
   "date": "2026-11-20",
-  "hash": "8ae4726adb5ba5e3f6ec0d5b79c95d2b"
+  "hash": "81f02e3bf5ae046943fbbe724dab793b"
  },
  "/services/business-compliance/": {
   "date": "2026-11-20",
-  "hash": "87856194c941cdab0486bec997455f3e"
+  "hash": "da10922bbb796bda08e761f4bab3e87c"
  },
  "/services/business-tax/": {
   "date": "2026-11-20",
-  "hash": "22057601a9e9f5d3dc0a337ead88de5c"
+  "hash": "626fb69972cfa1979cec5591600253d9"
+ },
+ "/services/digital-finance/": {
+  "date": "2026-11-20",
+  "hash": "8b1ac6dbbed73051d29ec0d823d9e8ec"
+ },
+ "/services/expat-tax/": {
+  "date": "2026-11-20",
+  "hash": "0aa847fd595cb95420c581d3f615f166"
  },
  "/services/individual-tax/": {
   "date": "2026-11-20",
-  "hash": "feeaed223777441ce798259215b6927e"
+  "hash": "f9d18bf15a65c23bf347ba13e823db1f"
+ },
+ "/services/internal-controls/": {
+  "date": "2026-11-20",
+  "hash": "a9447f3b385a54694d35bfff067aca2e"
  },
  "/services/payroll/": {
   "date": "2026-11-20",
-  "hash": "ed457fd570019afbeaf0cdeea6344547"
+  "hash": "11f948de806ad217d63d5d625625c19f"
  },
  "/services/sars-disputes/": {
   "date": "2026-11-20",
-  "hash": "41fabb9b35c2e3c6d1086e533eded0af"
+  "hash": "baaeaa9c88dabffd7ba4e3966941d243"
  },
  "/services/tax-debt/": {
   "date": "2026-11-20",
-  "hash": "3a6b4797942426d5ccddab49db36919b"
+  "hash": "561f47a555268d955658a04827982e49"
  },
  "/services/tax-planning/": {
   "date": "2026-11-20",
-  "hash": "4890ee4fecdd5d586796f9a00a7513ba"
+  "hash": "945af18f5d47de554eac87f3d0286148"
  },
  "/services/vat/": {
   "date": "2026-11-20",
-  "hash": "a109b72649ec2da13b096ca40b10f6fa"
+  "hash": "3c8bf8a5b12feb4cf561d77b6d91ee3a"
  }
 }

@@ -274,6 +274,60 @@ SERVICES = [
    note("Advice tied to your numbers", "Recommendations are based on your financial information and compliance obligations. Legal drafting and regulated investment advice require the appropriate professional mandate.")]),
   faq=[("I am starting a business. Should it be a company or a sole proprietorship?", "We look at your plans, expected income, risks and tax position, and explain the registration and compliance obligations of each option before you decide."),
        ("Can you prepare financials for a funding application?", "Yes. We prepare budgets, cash-flow forecasts, business plans and the financial information lenders and funders ask for.")]),
+ dict(slug="digital-finance", send=["Access to your bank statements (PDF or CSV) for the last 3-6 months", "Your current spreadsheets or accounting system export", "A list of the numbers you want to see each month"], icon="cloud", short="Digital finance & dashboards",
+  title="Digital finance and management dashboards",
+  seo="Cloud Bookkeeping &amp; Management Dashboards | Think Mybiz",
+  desc="Move your books online with Taxnify, get monthly management dashboards and know your cash, debtors and SARS amounts due. Free consultation.",
+  card="Cloud bookkeeping on Taxnify, monthly dashboards, and cash, debtor and SARS positions at a glance.",
+  lead="We move your books from spreadsheets and paper to a cloud system, and give you a monthly picture of the numbers that matter: cash, what customers owe, what you owe, and what is due to SARS.",
+  body=lambda: "".join([
+   "<h2>What the service covers</h2>", ul([
+    "Setting up your bookkeeping on Taxnify, our accounting and compliance platform, or tidying an existing system.",
+    "Migrating opening balances and history from spreadsheets or your previous system, reconciled to the bank.",
+    "A monthly management pack: profit and loss, cash position, debtors and creditors, and VAT and PAYE amounts coming due.",
+    "Simple dashboards that show trends month by month, so you can see problems early.",
+    "Digital document capture, so invoices and slips are stored with the transactions they support.",
+    "Custom reports or integrations with other business systems, built with our sister company Think Mybiz Tech where needed."]),
+   "<h2>Why it matters</h2><p>Most tax problems start as bookkeeping problems: missing invoices, unreconciled bank accounts, or VAT and PAYE amounts nobody saw coming. Up-to-date digital books make tax returns faster, support any SARS verification, and give you numbers you can actually manage the business with.</p>",
+   note("Your data stays yours", "Access is controlled per user, every change is recorded, and client information is handled with regard to POPIA.")]),
+  faq=[("Do I have to use Taxnify?", "Taxnify is our recommended platform, but we can also work in a system you already use. We agree this in the engagement."),
+       ("Can you take over books that are months behind?", "Yes. We first catch up and reconcile the history, then move to monthly processing and reporting.")]),
+ dict(slug="expat-tax", send=["Your passport travel dates for the relevant tax years", "Foreign employment contracts and payslips", "Foreign tax returns or certificates of tax paid", "Your SARS tax number and recent assessments"], icon="globe", short="Foreign income & expat tax",
+  title="Foreign income, expat and tax residency",
+  seo="Expat Tax, Foreign Income &amp; Tax Residency SA | Think Mybiz",
+  desc="South Africans working abroad: tax residency assessments, foreign employment income, foreign tax credits and ceasing residency with SARS. Free consultation.",
+  card="Tax residency, foreign employment income, foreign tax credits and ceasing SA tax residency.",
+  lead="South Africans who work or live abroad, and foreign nationals earning South African income, often face different tax rules. We assess your position and handle the SARS side.",
+  body=lambda: "".join([
+   "<h2>What we help with</h2>", ul([
+    "Assessing whether you are a South African tax resident in a given year, based on your facts and the tests in the Income Tax Act.",
+    "Declaring foreign employment income on your ITR12, and claiming the foreign employment income exemption where the requirements are met.",
+    "Claiming credits for foreign tax paid, with the supporting certificates SARS requires.",
+    "Ceasing South African tax residency: assessing the date, the tax consequences, and the notification to SARS.",
+    "Non-residents with South African income, such as rental income, and their filing obligations.",
+    "Coordination with specialists in the other country, or for complex treaty questions."]),
+   "<h2>Why early advice helps</h2><p>Residency and foreign income rules turn on dates, days present and documents. Getting the position right before a return is filed, or before you leave, avoids estimated assessments, double taxation and penalties later.</p>",
+   note("Specialist input where needed", "Foreign tax returns, treaty disputes and complex structures are coordinated with appropriately qualified specialists in the relevant country; responsibilities and any external fees are agreed first.")]),
+  faq=[("I work overseas. Do I still need to file in South Africa?", "It depends on whether you are still a South African tax resident and on your income. We assess your residency and filing obligations from your travel dates and employment details."),
+       ("Can I stop being a South African tax resident?", "Yes, ceasing residency is possible, but it has tax consequences on the date it happens. We assess the date and the consequences and handle the SARS notification.")]),
+ dict(slug="internal-controls", send=["Your bank statements and access list for banking and eFiling", "Payroll reports for the last 2-3 months", "Your latest VAT201 and EMP201 submissions", "A short description of who does what in the finance function"], icon="shield", short="Internal controls review",
+  title="SME internal controls and financial health review",
+  seo="SME Internal Controls &amp; Financial Review | Think Mybiz",
+  desc="A fixed-scope review of cash, banking, payroll, VAT and SARS controls for small businesses, with a prioritised list of fixes. Not an audit.",
+  card="Fixed-scope check of cash, banking, payroll, VAT and SARS controls, with a prioritised list of fixes.",
+  lead="A practical, fixed-scope review of how money and compliance are controlled in your business, followed by a short report of what to fix first.",
+  body=lambda: "".join([
+   "<h2>What we review</h2>", rows([
+    ("Cash and banking", "Who can pay, approve and change bank details; reconciliation of bank accounts; petty cash."),
+    ("Sales and debtors", "Invoicing, credit notes and follow-up of overdue accounts."),
+    ("Purchases and creditors", "Supplier set-up, approvals and duplicate-payment risk."),
+    ("Payroll", "Changes to employees and pay, approvals, and reconciliation to EMP201 and EMP501."),
+    ("VAT and SARS", "VAT201 workings, eFiling access, outstanding returns and SARS account status."),
+    ("Records", "Whether documents can be found quickly for a SARS verification or audit.")]),
+   "<h2>What you receive</h2><p>A short written report with findings ranked by risk, practical fixes that suit the size of the business, and an offer to help implement them.</p>",
+   note("Not an audit", "This review is an advisory engagement and does not result in an audit or review opinion. Statutory audits are performed by registered auditors and are referred where required.")]),
+  faq=[("Is this the same as an audit?", "No. It is a practical advisory review of controls; it does not give an audit opinion. Where a statutory audit is required, we refer you to a registered auditor."),
+       ("How long does it take?", "The scope and timing are agreed upfront in the quotation, based on the size of the business.")]),
 ]
 SVC = {s["slug"]: s for s in SERVICES}
 
@@ -358,7 +412,7 @@ CITIES = [
 import glob, markdown as _md
 def load_articles():
     arts = []
-    for fp in sorted(f for f in glob.glob(os.path.join(OUT, "_src", "articles", "*.md")) if not f.endswith("README.md")):
+    for fp in sorted(f for f in glob.glob(os.path.join(OUT, "_src", "articles", "*.md")) if os.path.basename(f) not in ("README.md", "CALENDAR.md")):
         raw = open(fp, encoding="utf-8").read()
         assert raw.startswith("---"), fp
         _, fm, body = raw.split("---", 2)
@@ -391,6 +445,50 @@ def related_articles(slug):
     if not rel: return ""
     return "<h2>Related articles</h2><ul class=\"checks\">" + "".join(f'<li><a href="{a["path"]}">{E(a["title"])}</a></li>' for a in rel) + "</ul>"
 
+
+# ------------------------------------------------------------------ industry pages
+INDUSTRIES = [
+ dict(slug="construction", icon="building", name="Construction &amp; property", seo="Accountants for Construction Companies | Think Mybiz",
+  desc="Tax, VAT, payroll, CIDB and tender compliance for South African construction and property businesses. Remote service nationwide. Free consultation.",
+  lead="Contractors and property businesses carry heavy compliance loads: tenders, CIDB, VAT on progress payments, site payroll and Compensation Fund returns. We keep it in order so you can keep building.",
+  challenges=["Tax compliance status (TCS) PINs and CSD profiles that must be current for every tender",
+              "CIDB registration and grading documentation that depends on up-to-date financial statements",
+              "VAT on deposits, progress payments and retentions",
+              "Weekly or fortnightly site payroll, with PAYE, UIF and SDL declared correctly",
+              "Compensation Fund registration and annual returns of earnings",
+              "Rental income and property disposals for property owners"],
+  focus=["business-compliance", "payroll", "vat", "accounting", "tax-planning", "internal-controls"]),
+ dict(slug="security", icon="shield", name="Security services", seo="Accountants for Security Companies | Think Mybiz",
+  desc="Payroll, EMP201/EMP501, UIF, Compensation Fund, PSIRA and tender compliance for security companies in South Africa. Free consultation.",
+  lead="Security companies are payroll-heavy and tender-driven. Errors in PAYE, UIF or EMP501 reconciliations, or an expired tax clearance PIN, can cost contracts. We keep both sides compliant.",
+  challenges=["Large payrolls with shifts, overtime and allowances, declared correctly on EMP201",
+              "Bi-annual EMP501 reconciliations that must match payroll, payments and IRP5s",
+              "UIF declarations and Compensation Fund returns of earnings",
+              "PSIRA-related documentation and letters of good standing for contracts",
+              "Tax clearance PINs and CSD registration for government and corporate tenders",
+              "Cash flow between contract payments and monthly wage runs"],
+  focus=["payroll", "business-compliance", "tax-debt", "accounting", "internal-controls", "business-advisory"]),
+ dict(slug="transport-logistics", icon="compass", name="Transport &amp; logistics", seo="Accountants for Transport &amp; Logistics | Think Mybiz",
+  desc="Bookkeeping, VAT, fleet asset registers, driver payroll and tax for South African transport and logistics businesses. Free consultation.",
+  lead="Transport businesses run on thin margins and large fleets. We keep fleet costs, finance agreements, VAT and driver payroll accurate so the numbers show which routes and vehicles actually make money.",
+  challenges=["Fixed-asset registers and wear-and-tear allowances for vehicles and trailers",
+              "VAT on vehicles and fuel, where the rules differ by vehicle type and use",
+              "Instalment sale and lease agreements recorded correctly",
+              "Driver payroll, allowances and subsistence, declared correctly",
+              "Tax clearance and CSD requirements for contract work",
+              "Cash-flow planning around fuel, maintenance and finance payments"],
+  focus=["accounting", "vat", "payroll", "business-tax", "digital-finance", "business-advisory"]),
+ dict(slug="nonprofits", icon="users", name="Nonprofits &amp; schools", seo="Accountants for NPOs, NPCs &amp; Schools | Think Mybiz",
+  desc="Financial statements, payroll, PBO and section 18A applications and tax compliance for nonprofits, NPCs and independent schools. Free consultation.",
+  lead="Nonprofit organisations, nonprofit companies and independent schools must account to funders, members and regulators. We prepare reliable financial statements and handle the tax side.",
+  challenges=["Annual financial statements that funders, boards and members can rely on",
+              "The difference between nonprofit or CIPC registration and SARS tax-exempt (PBO) approval",
+              "Public benefit organisation and section 18A applications where the organisation qualifies",
+              "Payroll for staff and educators, with PAYE, UIF and SDL obligations",
+              "Ongoing filing and record requirements after exemption is granted",
+              "Grant and project tracking alongside the general ledger"],
+  focus=["accounting", "business-tax", "payroll", "digital-finance", "internal-controls", "business-compliance"]),
+]
 # ------------------------------------------------------------------ chrome
 NAV = [("Services", "/services/"), ("SARS disputes", "/services/sars-disputes/"), ("Tax debt", "/services/tax-debt/"),
        ("About", "/about/"), ("How we work", "/how-we-work/"), ("Service areas", "/service-areas/")]
@@ -422,7 +520,7 @@ def footer():
 <p style="margin-top:16px;max-width:330px">Accounting, tax, payroll and SARS compliance for businesses and individuals anywhere in South Africa. Accountable. Reliable. Compliant.</p>
 <p style="margin-top:10px">SARS registered tax practitioner {PR}</p>{social_links()}</div>
 <div><h4>Tax services</h4><ul>{svc}</ul></div>
-<div><h4>Business services</h4><ul>{svc2}<li><a href="/sars-letter/">Received a SARS letter?</a></li></ul></div>
+<div><h4>Business services</h4><ul>{svc2}<li><a href="/sars-letter/">Received a SARS letter?</a></li><li><a href="/industries/">Industries we serve</a></li></ul></div>
 <div><h4>Contact</h4><ul><li><a href="tel:{TEL}">{PHONE}</a></li>{wa}<li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li>{ADDRESS}</li><li><a href="/service-areas/">Serving all nine provinces</a></li>{"".join(f'<li><a href="{c["path"]}">{c["short"]}</a></li>' for c in CITIES)}</ul></div>
 </div>
 <div class="footer-bottom"><span>© <span id="year">2026</span> {BRAND}. {E(LEGAL)}, reg. no. 2021/819201/07.</span>
@@ -558,7 +656,7 @@ home = f"""<section class="hero"><div class="container hero-grid"><div>
 
 <section class="section"><div class="container"><div class="section-head"><span class="eyebrow">What we do</span><h2>Accounting and tax services for every stage</h2>
 <p class="lead">From your first tax registration to a dispute with SARS: one practice that connects your books, tax returns and supporting evidence, so each submission has a clear basis.</p></div>
-<div class="grid g4">{svc_cards(extra=True)}</div></div></section>
+<div class="grid g3">{svc_cards(extra=True)}</div></div></section>
 
 <section class="section alt"><div class="container"><div class="band"><div><span class="eyebrow light">SARS disputes &amp; tax debt</span>
 <h2 style="margin:.35em 0 .45em">Received an assessment, audit letter or final demand?</h2>
@@ -596,7 +694,7 @@ page("/", "Accountants &amp; Tax Practitioners South Africa | Think Mybiz",
 hub = hero("Our services", "Accounting, tax and compliance services",
   "Services are available through monthly retainers, once-off assignments or separate dispute and recovery engagements, for individuals, start-ups and established businesses anywhere in South Africa.",
   [("Home", "/"), ("Services", None)]) + f"""
-<section class="section"><div class="container"><div class="grid g4">{svc_cards(extra=True)}</div></div></section>
+<section class="section"><div class="container"><div class="grid g3">{svc_cards(extra=True)}</div></div></section>
 <section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Ways to engage us</span><h2>An engagement that fits the work</h2></div>
 <div class="grid g3">
 <div class="card"><h3>Monthly retainer</h3><p>Ongoing bookkeeping, tax, VAT, payroll and compliance for an agreed monthly fee.</p></div>
@@ -605,7 +703,8 @@ hub = hero("Our services", "Accounting, tax and compliance services",
 {note("A defined engagement", "The quotation identifies deliverables, exclusions, responsibilities and fees; external approval and third-party charges are addressed separately.")}</div></section>
 <section class="section"><div class="container"><div class="section-head"><span class="eyebrow">Who we serve</span><h2>Clients and sectors</h2>
 <p class="lead">We serve individuals, start-ups and established small and medium businesses, including companies, close corporations, sole proprietors and trusts.</p></div>
-<div class="chips">{"".join(f'<span class="chip">{s}</span>' for s in ["Construction","Security","Transport &amp; logistics","Retail","Hospitality","Property","Professional services","Nonprofit organisations","Employees &amp; directors","Landlords","Independent contractors"])}</div></div></section>
+<div class="grid g4">{"".join(f'<a class="card" href="/industries/{i["slug"]}/">{icon(i["icon"])}<h3>{i["name"]}</h3><span class="more">View →</span></a>' for i in INDUSTRIES)}</div>
+<div class="chips" style="margin-top:20px">{"".join(f'<span class="chip">{s}</span>' for s in ["Retail","Hospitality","Professional services","Employees &amp; directors","Landlords","Independent contractors","South Africans working abroad"])}</div></div></section>
 {cta()}"""
 page("/services/", "Accounting &amp; Tax Services in South Africa | Think Mybiz",
      "Tax returns, VAT, payroll, SARS disputes, tax debt, accounting, CIPC, licences, tenders and business advice for clients anywhere in South Africa.",
@@ -759,6 +858,32 @@ priv = hero("Privacy", "Privacy &amp; POPIA notice", "How this website handles p
 <h2>Cookies and analytics</h2>{('<p>With your consent, this website uses Google Analytics to count visits and enquiries (for example, which pages lead to an enquiry). Analytics cookies are only set if you click Accept on the cookie notice; you can withdraw consent by clearing this site&#39;s data in your browser. We do not use advertising cookies.</p>' if GA_ID else '<p>This website does not use advertising or tracking cookies.</p>')}<p>Fonts are loaded from Google Fonts.</p>
 </div></section>"""
 page("/privacy/", "Privacy &amp; POPIA Notice | Think Mybiz", "How Think Mybiz Accountants and Tax Practitioners handles personal information submitted through this website, in line with POPIA.", priv, "")
+
+# ------------------------------------------------------------------ INDUSTRY PAGES
+for ind in INDUSTRIES:
+    path = f'/industries/{ind["slug"]}/'
+    body = hero("Industries", f'Accounting and tax for {ind["name"].lower()}', ind["lead"],
+                [("Home", "/"), ("Industries", "/industries/"), (ind["name"], None)]) + f"""
+<section class="section"><div class="container two-col"><div class="content">
+<h2>What we see in {ind["name"].lower()}</h2>{ul(ind["challenges"])}
+<p>All work is prepared and reviewed under MF Banda, SARS registered tax practitioner ({PR}), and submitted only with your approval. We serve clients anywhere in South Africa remotely.</p></div>
+<aside class="aside"><div class="card" style="background:var(--navy-900);border-color:var(--navy-900);color:#c9d4ec">
+<h3 style="color:#fff">Talk to us</h3><p style="font-size:.93rem">Free initial consultation for {ind["name"].lower()} businesses.</p>
+<a class="btn btn-primary" href="/contact/" style="margin-top:14px;width:100%;justify-content:center">Book a consultation</a>
+<a class="btn btn-ghost" href="tel:{TEL}" style="margin-top:10px;width:100%;justify-content:center">Call {PHONE}</a></div>
+<div class="card"><h3>Other industries</h3><ul>{"".join(f'<li><a href="/industries/{o["slug"]}/">{o["name"]}</a></li>' for o in INDUSTRIES if o is not ind)}</ul></div></aside></div></section>
+<section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">How we help</span><h2>Services for {ind["name"].lower()}</h2></div>
+<div class="grid g3">{svc_cards([SVC[k] for k in ind["focus"]])}</div></div></section>{cta()}"""
+    page(path, ind["seo"], ind["desc"], body, "/services/",
+         [crumbs_schema([("Home", "/"), ("Industries", "/industries/"), (ind["name"], path)])])
+indhub = hero("Industries", "Industries we serve",
+  "We work with individuals, start-ups and established small and medium businesses across sectors. These are the industries where we see the most specific compliance needs.",
+  [("Home", "/"), ("Industries", None)]) + f"""
+<section class="section"><div class="container"><div class="grid g4">{"".join(f'<a class="card" href="/industries/{i["slug"]}/">{icon(i["icon"])}<h3>{i["name"]}</h3><p>{E(html.unescape(i["lead"]))[:120]}…</p><span class="more">View →</span></a>' for i in INDUSTRIES)}</div>
+<p style="margin-top:24px">Also: retail, hospitality, professional services and individuals. <a href="/services/">See all services →</a></p></div></section>{cta()}"""
+page("/industries/", "Industries We Serve | Think Mybiz Accountants",
+     "Accounting, tax and compliance for construction, security, transport and logistics, nonprofits and schools, anywhere in South Africa.",
+     indhub, "/services/", [crumbs_schema([("Home", "/"), ("Industries", "/industries/")])])
 
 # ------------------------------------------------------------------ CITY PAGES
 for c in CITIES:

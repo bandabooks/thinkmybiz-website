@@ -52,6 +52,7 @@ $SERVICE_LABELS = [
   'payroll' => 'Payroll & employer taxes', 'sars-disputes' => 'SARS disputes & resolution', 'tax-debt' => 'Tax debt & compliance recovery',
   'tax-planning' => 'Tax planning & specialist support', 'accounting' => 'Accounting & financial statements',
   'business-compliance' => 'CIPC, licences & tenders', 'business-advisory' => 'Business advisory',
+  'digital-finance' => 'Digital finance & dashboards', 'expat-tax' => 'Foreign income & expat tax', 'internal-controls' => 'Internal controls review',
 ];
 if (isset($SERVICE_LABELS[$service])) $service = $SERVICE_LABELS[$service];
 $serv1 = preg_replace('/[\n]+/', ' ', $service ?: 'General enquiry');
