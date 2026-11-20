@@ -13,41 +13,42 @@
   if (q) { var s = f.querySelector("[name=service]"); if (s) for (var i = 0; i < s.options.length; i++) if (s.options[i].value === q) s.selectedIndex = i; }
   f.querySelector("[name=ts]").value = Date.now();
 
-  // Province -> town/village drop-downs, with free text for towns not listed and for clients outside South Africa.
+  // Searchable province and town/village fields (native datalist). Province must match the list;
+  // any town or village may be typed, with that province's main towns suggested as you type.
   var prov = document.getElementById("f-prov"), town = document.getElementById("f-town"),
-      townWrap = document.getElementById("town-wrap"), otherWrap = document.getElementById("other-wrap"),
-      other = document.getElementById("f-other"), otherLabel = document.getElementById("f-other-label");
+      townList = document.getElementById("town-list"), townLabel = document.getElementById("f-town-label"),
+      townHelp = document.getElementById("f-town-help");
   if (prov && town) {
-    var TOWNS = JSON.parse(prov.getAttribute("data-towns")), OTHER = prov.getAttribute("data-other"),
-        OUTSIDE = prov.getAttribute("data-outside");
-    function showOther(on, label, ph) {
-      otherWrap.hidden = !on; other.required = on;
-      if (label) otherLabel.textContent = label; if (ph) other.placeholder = ph;
-      if (!on) other.value = "";
+    var TOWNS = JSON.parse(prov.getAttribute("data-towns")), OUTSIDE = prov.getAttribute("data-outside"),
+        PROVS = Object.keys(TOWNS).concat([OUTSIDE]), current = "";
+    function match(v) {
+      v = v.trim().toLowerCase();
+      for (var i = 0; i < PROVS.length; i++) if (PROVS[i].toLowerCase() === v) return PROVS[i];
+      return "";
     }
-    prov.addEventListener("change", function () {
-      var p = prov.value; town.innerHTML = ""; showOther(false);
-      if (p === OUTSIDE) {
-        townWrap.hidden = true; town.disabled = true;
-        showOther(true, "Country and town *", "e.g. Gaborone, Botswana"); return;
-      }
-      townWrap.hidden = false;
-      if (!TOWNS[p]) { town.disabled = true; town.add(new Option("Select a province first", "")); return; }
+    function update() {
+      var p = match(prov.value);
+      prov.setCustomValidity(prov.value && !p ? "Please choose a province from the list." : "");
+      if (p) prov.value = p;
+      if (p === current) return;
+      current = p; town.value = ""; townList.innerHTML = "";
+      if (!p) { town.disabled = true; town.placeholder = "Select your province first, then type to search";
+        townLabel.textContent = "Town or village"; townHelp.hidden = false; return; }
       town.disabled = false;
-      town.add(new Option("Select your town or village", ""));
-      TOWNS[p].forEach(function (t) { town.add(new Option(t, t)); });
-      town.add(new Option(OTHER + "…", OTHER));
-    });
-    town.addEventListener("change", function () {
-      if (town.value === OTHER) showOther(true, "Your town or village *", "Type your town or village");
-      else showOther(false);
-    });
+      if (p === OUTSIDE) { townLabel.textContent = "Country and town"; town.placeholder = "e.g. Gaborone, Botswana"; townHelp.hidden = true; return; }
+      townLabel.textContent = "Town or village"; townHelp.hidden = false;
+      town.placeholder = "Type to search towns in " + p;
+      TOWNS[p].forEach(function (t) { var o = document.createElement("option"); o.value = t; townList.appendChild(o); });
+    }
+    prov.addEventListener("input", update);
+    prov.addEventListener("change", update);
+    prov.addEventListener("blur", update);
   }
   var ok = document.getElementById("enquiry-ok"), err = document.getElementById("enquiry-err");
 
   function mailtoFallback(d) {
     var body = "Name: " + d.get("name") + "\nPhone: " + d.get("phone") + "\nEmail: " + d.get("email") +
-      "\nProvince: " + d.get("province") + "\nTown/village: " + (d.get("town_other") || d.get("town") || "") + "\nService: " + d.get("service") + "\n\n" + d.get("message");
+      "\nProvince: " + d.get("province") + "\nTown/village: " + (d.get("town") || "") + "\nService: " + d.get("service") + "\n\n" + d.get("message");
     location.href = "mailto:accounts@thinkmybiz.co.za?subject=" + encodeURIComponent("Website enquiry: " + d.get("service")) +
       "&body=" + encodeURIComponent(body);
   }
@@ -60,7 +61,7 @@
     fetch("/contact.php", { method: "POST", body: d, headers: { "Accept": "application/json" } })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (r) {
-        if (r.ok && r.j.ok) { f.reset(); if (prov) prov.dispatchEvent(new Event("change")); ok.style.display = "block"; }
+        if (r.ok && r.j.ok) { f.reset(); if (prov) { prov.value = ""; prov.dispatchEvent(new Event("change")); } ok.style.display = "block"; }
         else { err.textContent = (r.j && r.j.error) || "Your message could not be sent."; err.style.display = "block"; }
       })
       .catch(function () { mailtoFallback(d); })

@@ -26,7 +26,9 @@ $town     = clean('town', 80);
 $town_oth = clean('town_other', 80);
 $PROVINCES = ['Gauteng', 'Limpopo', 'Mpumalanga', 'North West', 'KwaZulu-Natal', 'Western Cape', 'Eastern Cape',
               'Free State', 'Northern Cape', 'Outside South Africa'];
-if ($town === 'Other town or village' || $province === 'Outside South Africa') $town = $town_oth;
+// Province is typed into a searchable field: accept any letter case, store the canonical name.
+foreach ($PROVINCES as $pv) { if (strcasecmp($pv, $province) === 0) { $province = $pv; break; } }
+if ($town === '' && $town_oth !== '') $town = $town_oth; // older cached form
 $town = preg_replace('/[\n]+/', ' ', $town);
 $service  = clean('service', 120);
 $message  = clean('message', 5000);
