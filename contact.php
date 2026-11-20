@@ -5,7 +5,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 
 $TO   = 'accounts@thinkmybiz.co.za';
-$FROM = 'website@thinkmybiz.co.za';
+$FROM = 'accounts@thinkmybiz.co.za'; // must be an existing mailbox: Hostinger drops PHP mail from addresses that do not exist
 
 function out($code, $arr) { http_response_code($code); echo json_encode($arr); exit; }
 

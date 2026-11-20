@@ -4,7 +4,7 @@
 Content source: Think Mybiz Accountants and Tax Practitioners - Business Profile 2026.
 Do not add clients, figures, prices or claims that are not in the profile or confirmed by MF Banda.
 """
-import os, json, html
+import os, json, html, hashlib
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")  # repo root = public_html
 DOMAIN = "https://thinkmybiz.co.za"
@@ -298,7 +298,7 @@ def footer():
 <div class="footer-bottom"><span>© <span id="year">2026</span> {BRAND}. {E(LEGAL)}, reg. no. 2021/819201/07.</span>
 <span><a href="/privacy/">Privacy &amp; POPIA</a> · <a href="/contact/">Contact</a></span></div></div></footer>
 <div class="mbar"><a href="tel:{TEL}">Call {PHONE}</a>{f'<a href="{wa_link()}">WhatsApp us</a>' if WHATSAPP else '<a href="/contact/">Free consultation</a>'}</div>
-<script src="/assets/js/main.js" defer></script>"""
+<script src="/assets/js/main.js?v={ver("assets/js/main.js")}" defer></script>"""
 
 ORG = {
  "@context": "https://schema.org", "@type": "AccountingService", "@id": DOMAIN + "/#practice",
@@ -327,7 +327,7 @@ def page(path, title, desc, body, active="", schema=None, noindex=False):
 <link rel="icon" href="/assets/img/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css">{lds}
+<link rel="stylesheet" href="/assets/css/style.css?v={ver("assets/css/style.css")}">{lds}
 </head><body>{header(active)}<main id="main">{body}</main>{footer()}</body></html>"""
     fp = os.path.join(OUT, path.strip("/"), "index.html") if path.endswith("/") else os.path.join(OUT, path.strip("/"))
     os.makedirs(os.path.dirname(fp), exist_ok=True)
@@ -335,6 +335,8 @@ def page(path, title, desc, body, active="", schema=None, noindex=False):
     if not noindex: SITEMAP.append(path)
 
 SITEMAP = []
+def ver(rel):  # cache-busting version from file content, so CDN/browser caches pick up CSS/JS changes at once
+    return hashlib.md5(open(os.path.join(OUT, rel), "rb").read()).hexdigest()[:8]
 
 def hero(eyebrow, h1, lead, crumbs=None, actions=True, cls="hero page-hero"):
     c = ""

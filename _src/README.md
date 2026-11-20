@@ -22,7 +22,7 @@ Hand-edited files (not generated): `assets/css/style.css`, `assets/js/main.js`, 
 
 ## Contact form
 
-`contact.php` emails enquiries to accounts@thinkmybiz.co.za (From: website@thinkmybiz.co.za, Reply-To: the enquirer). Nothing is stored on the server. If the PHP handler is unreachable, the form falls back to opening the visitor's email app.
+`contact.php` emails enquiries to accounts@thinkmybiz.co.za (From and To: accounts@thinkmybiz.co.za, an existing mailbox; Reply-To: the enquirer). Nothing is stored on the server. If the PHP handler is unreachable, the form falls back to opening the visitor's email app.
 
 ## Content source
 
