@@ -19,6 +19,18 @@ PR = "PR-0034776"
 # WhatsApp number (confirmed by MF Banda 20/11/2026: 066 210 5631). Empty = no WhatsApp buttons.
 WHATSAPP, WA_DISPLAY = "27662105631", "066 210 5631"
 
+# ---- Settings MF Banda can fill in; empty values switch the feature off (nothing invented is published).
+# Social media profiles: paste the full profile URL. Shown as footer icons and as "sameAs" for Google.
+SOCIAL = {"facebook": "", "linkedin": "", "instagram": "", "tiktok": "", "x": "", "youtube": ""}
+# Office hours for Google, e.g. ["Mo-Fr 08:00-17:00"]. Empty until confirmed.
+OPENING_HOURS = []
+# Google Analytics 4 measurement ID, e.g. "G-XXXXXXXXXX". Empty = no analytics and no cookie banner.
+GA_ID = ""
+# Google Search Console HTML-tag verification code (the content="..." value). Empty = no tag.
+GSC_VERIFY = ""
+# IndexNow key (Bing, Yandex and others): the key file is published at /<key>.txt so new pages can be submitted instantly.
+INDEXNOW_KEY = "1b3bcb6effaa658108b8dde33d57d2f6"
+
 E = html.escape
 I = {
  "user": '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/>',
@@ -42,6 +54,19 @@ I = {
  "cloud": '<path d="M7 18h10a4 4 0 00.5-8A6 6 0 006 9.5 4.3 4.3 0 007 18z"/>',
 }
 def svg(n, cls=""): return f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{I[n]}</svg>'
+SOCIAL_ICONS = {
+ "facebook": ("Facebook", '<path d="M14 8h3V4h-3a4 4 0 00-4 4v2H8v4h2v8h4v-8h3l1-4h-4V8z"/>'),
+ "linkedin": ("LinkedIn", '<rect x="3" y="9" width="4" height="12"/><circle cx="5" cy="5" r="2"/><path d="M10 9h4v2a4 4 0 017 3v7h-4v-6a2 2 0 00-4 0v6h-3z"/>'),
+ "instagram": ("Instagram", '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/>'),
+ "tiktok": ("TikTok", '<path d="M15 3c.4 2.6 2 4.2 5 4.5v3.7c-1.9 0-3.6-.6-5-1.6V16a6 6 0 11-6-6v3.7a2.3 2.3 0 102.3 2.3V3z"/>'),
+ "x": ("X", '<path d="M4 4l16 16M20 4L4 20"/>'),
+ "youtube": ("YouTube", '<rect x="2" y="6" width="20" height="12" rx="4"/><path d="M10 9l5 3-5 3z"/>'),
+}
+def social_links():
+    out = "".join(f'<a href="{E(u)}" rel="noopener" target="_blank" aria-label="{SOCIAL_ICONS[k][0]}" data-track="social_{k}">'
+                  f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{SOCIAL_ICONS[k][1]}</svg></a>'
+                  for k, u in SOCIAL.items() if u)
+    return f'<div class="social">{out}</div>' if out else ""
 def icon(n): return f'<div class="icon">{svg(n)}</div>'
 def ul(items, cls="checks"): return f'<ul class="{cls}">' + "".join(f"<li>{i}</li>" for i in items) + "</ul>"
 def rows(pairs): return '<div class="rows">' + "".join(f'<div class="row"><div class="k">{k}</div><div class="v">{v}</div></div>' for k, v in pairs) + "</div>"
@@ -49,10 +74,10 @@ def note(h, t): return f'<div class="note"><h3>{h}</h3><p>{t}</p></div>'
 
 # ------------------------------------------------------------------ services (from the business profile)
 SERVICES = [
- dict(slug="individual-tax", icon="user", short="Individual & provisional tax",
+ dict(slug="individual-tax", send=['Your SARS tax number and ID (sent through a secure route)', 'IRP5/IT3(a) certificates from every employer', 'IT3(b)/IT3(c) investment certificates', 'Retirement annuity and medical aid tax certificates', 'Rental, freelance or business income and expense records', 'Travel logbook, if you receive a travel allowance'], icon="user", short="Individual & provisional tax",
   title="Individual and provisional tax",
-  seo="Personal Income Tax Returns (ITR12) &amp; Provisional Tax | Think Mybiz Accountants",
-  desc="ITR12 personal tax returns, provisional tax (IRP6), rental and sole-proprietor income, travel logbooks and SARS assessment checks for individuals anywhere in South Africa.",
+  seo="ITR12 Personal Tax Returns &amp; Provisional Tax | Think Mybiz",
+  desc="Personal tax returns (ITR12), provisional tax, rental and freelance income, travel logbooks and assessment checks, anywhere in South Africa. Free consultation.",
   card="ITR12 returns, provisional tax, rental and sole-proprietor income, travel logbooks and assessment reviews.",
   lead="We assist employees, directors, independent contractors, sole proprietors, landlords and other individual taxpayers with their South African tax affairs, from registration through to assessment review.",
   body=lambda: "".join([
@@ -69,10 +94,10 @@ SERVICES = [
   faq=[("Can you check an auto-assessment before I accept it?", "Yes. We review the prepopulated information and auto-assessment against your IRP5, IT3 and other certificates, and add income or deductions that were left out where the process permits."),
        ("I earn rental or freelance income. Can you include it?", "Yes. We prepare schedules for rental income and expenses, sole-proprietor, commission and other taxable receipts, and connect them to your personal return."),
        ("Do I need to come to the office?", "No. Documents are sent electronically and we meet by phone or video call, wherever you are in South Africa.")]),
- dict(slug="business-tax", icon="building", short="Business & trust tax",
+ dict(slug="business-tax", send=['Company or trust registration documents', 'Latest financial statements or trial balance', 'Prior-year returns and SARS correspondence', 'Shareholder or beneficiary loan account details', 'Dividend declarations and trustee resolutions, where relevant'], icon="building", short="Business & trust tax",
   title="Business and trust tax",
-  seo="Company Tax (ITR14), Trust Tax (ITR12T) &amp; Tax Clearance | Think Mybiz Accountants",
-  desc="ITR14 company tax returns, close corporations, trusts (ITR12T, IT3(t)), dividends tax, tax compliance status (TCS) PINs and nonprofit/PBO support across South Africa.",
+  seo="Company Tax ITR14, Trusts &amp; Tax Clearance | Think Mybiz",
+  desc="ITR14 company and CC tax returns, trust tax (ITR12T), dividends tax, tax clearance PINs and nonprofit tax support across South Africa. Free consultation.",
   card="ITR14 for companies and CCs, trusts, dividends tax, tax clearance PINs and nonprofit tax support.",
   lead="We align taxable income with the underlying financial records and the requirements of the relevant taxpayer. Company, trust and owner obligations are considered separately.",
   body=lambda: "".join([
@@ -90,10 +115,10 @@ SERVICES = [
    note("A scope suited to the entity", "We confirm the entity type, tax registrations, reporting period and applicable requirements before preparation. Exemptions, incentives and special tax regimes depend on statutory eligibility.")]),
   faq=[("My company has years of outstanding returns. Can you help?", "Yes. We review the company's filing history, catch up historic returns and help address non-compliance so that a tax compliance status PIN can be obtained."),
        ("Do you handle trusts?", "Yes: SARS trust registration, ITR12T returns, beneficiary allocations and IT3(t) reporting, considered alongside the trust deed and trustee resolutions.")]),
- dict(slug="vat", icon="receipt", short="VAT services",
+ dict(slug="vat", send=['VAT registration notice (or turnover figures, if not yet registered)', 'Sales and purchase invoices for the period', 'Bank statements for the period', 'SARS VAT statements and any verification letters'], icon="receipt", short="VAT services",
   title="VAT services",
-  seo="VAT Registration, VAT201 Returns &amp; VAT Audits | Think Mybiz Accountants",
-  desc="VAT registration (compulsory and voluntary), VAT201 returns, VAT reconciliations, SARS VAT verifications and audits, and VAT deregistration for vendors across South Africa.",
+  seo="VAT Registration, VAT201 Returns &amp; Audits | Think Mybiz",
+  desc="VAT registration, VAT201 returns, reconciliations, SARS VAT verifications and audits, and deregistration for South African businesses. Free consultation.",
   card="VAT registration, VAT201 returns, reconciliations, SARS verifications and deregistration.",
   lead="We support VAT vendors through registration, periodic returns, reconciliations, SARS queries and changes to the business. Good source records are central to a defensible VAT position.",
   body=lambda: "".join([
@@ -112,10 +137,10 @@ SERVICES = [
    note("Practical VAT advice", "We explain how VAT affects quotations, invoicing, cash flow and recordkeeping. VAT charged to customers must be accounted for correctly, and input tax claims require the relevant legal and documentary support.")]),
   faq=[("SARS is verifying my VAT return. What should I do?", "Send us the SARS letter as soon as you receive it. We assemble the transaction schedules and invoices SARS asks for and respond within the stated deadline."),
        ("Should my business register for VAT?", "We assess whether registration is compulsory or whether voluntary registration makes sense for your business, and prepare the application and supporting documents.")]),
- dict(slug="payroll", icon="users", short="Payroll & employer taxes",
+ dict(slug="payroll", send=['Employee list with contracts and start dates', 'Monthly salary inputs: overtime, allowances, deductions', 'Previous EMP201s and EMP501s', 'IRP5s already issued, and any SARS employer letters'], icon="users", short="Payroll & employer taxes",
   title="Payroll and employer taxes",
-  seo="Payroll, EMP201, EMP501, IRP5 &amp; UIF/COIDA Compliance | Think Mybiz Accountants",
-  desc="Monthly payroll and payslips, PAYE/UIF/SDL registration, EMP201 and EMP501 reconciliations, IRP5 certificates, ETI, UIF and Compensation Fund (COIDA) for South African employers.",
+  seo="Payroll, EMP201, EMP501 &amp; UIF Compliance | Think Mybiz",
+  desc="Monthly payroll and payslips, EMP201 and EMP501, IRP5s, ETI, UIF and Compensation Fund returns for South African employers. Free consultation.",
   card="Payroll and payslips, EMP201, EMP501, IRP5s, ETI, UIF and Compensation Fund returns.",
   lead="We help employers connect payroll calculations, employee certificates and SARS declarations, with reconciliation across the monthly and employer-reconciliation cycles.",
   body=lambda: "".join([
@@ -136,10 +161,10 @@ SERVICES = [
    note("Employer approval and records", "The employer confirms employee details, remuneration and payroll changes. We agree cut-off dates, filing responsibilities and payment instructions in the engagement.")]),
   faq=[("Our EMP501 does not balance. Can you fix it?", "Yes. We investigate mismatches between payroll, EMP201 declarations, payments and IRP5 certificates, and prepare the corrections and outstanding reconciliations."),
        ("Do you help with UIF and the Compensation Fund?", "Yes: UIF employer administration and declarations, Compensation Fund registration and returns of earnings, and letters of good standing.")]),
- dict(slug="sars-disputes", icon="scale", short="SARS disputes & resolution",
+ dict(slug="sars-disputes", send=['The full SARS letter or assessment, and the date you received it', 'The return SARS is questioning', 'Supporting documents for the items in dispute', 'Any case number and previous correspondence with SARS'], icon="scale", short="SARS disputes & resolution",
   title="SARS disputes and resolution",
-  seo="SARS Disputes: Objections, Appeals, Audits &amp; ADR | Think Mybiz Accountants",
-  desc="Help with SARS audits and verifications, requests for correction and reasons, notices of objection and appeal, alternative dispute resolution (ADR) and penalty remission, anywhere in South Africa.",
+  seo="SARS Objections, Appeals &amp; Audits Help | Think Mybiz",
+  desc="Help with SARS audits, verifications, requests for correction, objections, appeals, ADR and penalty remission, from a SARS registered tax practitioner.",
   card="Audits and verifications, objections, appeals, ADR, late submissions and penalty remission.",
   lead="A disputed assessment requires the correct procedure, supporting evidence and careful deadline management. We review the facts and the available remedy before preparing a response.",
   body=lambda: "".join([
@@ -157,10 +182,10 @@ SERVICES = [
   faq=[("SARS has issued an assessment I disagree with. What now?", "Send us the full notice and the date you received it. We review the facts and choose the right route: a request for correction, a request for reasons, or a notice of objection, followed by an appeal or ADR where there is a basis."),
        ("Does lodging an objection stop SARS collecting the debt?", "No. An objection or appeal does not by itself suspend payment. A separate suspension of payment request must be considered, and we can prepare it where it is available."),
        ("Can you help if I missed the deadline to object?", "We assess whether an extension or condonation is legally available and, if so, prepare the motivation and evidence.")]),
- dict(slug="tax-debt", icon="alert", short="Tax debt & compliance recovery",
+ dict(slug="tax-debt", send=['Your latest SARS statement of account', 'Final demand or collection letters, with dates', 'A list of returns you have not yet submitted', 'Recent bank statements and a cash-flow summary'], icon="alert", short="Tax debt & compliance recovery",
   title="Tax debt and compliance recovery",
-  seo="SARS Tax Debt: Payment Arrangements, Suspension &amp; Compromise | Think Mybiz Accountants",
-  desc="SARS account reconciliations, payment arrangements, section 164 suspension of payment, debt compromise, Voluntary Disclosure Programme (VDP) and Tax Ombud complaints.",
+  seo="SARS Tax Debt Help: Payment Arrangements | Think Mybiz",
+  desc="Owe SARS? Account reconciliation, payment arrangements, suspension of payment, debt compromise, VDP and Tax Ombud help from a registered practitioner.",
   card="SARS account reconciliation, payment arrangements, suspension, compromise, VDP and Tax Ombud.",
   lead="We first establish whether the amount is correct, whether returns are outstanding and whether the taxpayer disputes the liability or needs assistance with payment. These questions determine the next step.",
   body=lambda: "".join([
@@ -176,10 +201,10 @@ SERVICES = [
   faq=[("I owe SARS money I cannot pay at once. Can you help?", "Yes. We first check that the balance is correct, then prepare an instalment or deferral request with cash-flow information and supporting motivation for SARS to consider."),
        ("Can you get my tax debt written off?", "We do not promise write-offs. Where the statutory criteria may be met, we assess eligibility for a compromise and prepare the application; the decision rests with SARS."),
        ("My refund has been delayed for months. What can be done?", "We follow up the account query and, where the requirements are met, escalate through SARS complaints and the Tax Ombud.")]),
- dict(slug="tax-planning", icon="compass", short="Tax planning & specialist support",
+ dict(slug="tax-planning", send=['A short description of the planned transaction or decision', 'Agreements, valuations or offers, if available', 'Recent financial statements and tax returns'], icon="compass", short="Tax planning & specialist support",
   title="Tax planning and specialist support",
-  seo="Tax Planning: CGT, Property, Dividends, Estates &amp; Cross-Border | Think Mybiz Accountants",
-  desc="Tax advice before you act: capital gains tax, property and rental tax, dividends, donations and estates, cross-border tax, transaction planning and incentives, with specialists coordinated where needed.",
+  seo="Tax Planning: CGT, Property &amp; Estates | Think Mybiz",
+  desc="Tax advice before you act: capital gains tax, property, dividends, donations, estates, cross-border tax and transaction planning in South Africa.",
   card="Capital gains, property, dividends, donations and estates, cross-border and transaction planning.",
   lead="We help clients understand the tax consequences of business and personal decisions before transactions are concluded. Advice is based on the facts and the applicable law, with specialist coordination where the matter requires it.",
   body=lambda: "".join([
@@ -195,10 +220,10 @@ SERVICES = [
    note("Advice before implementation", "Legal drafting, conveyancing, regulated investment advice and court representation require the appropriate professional mandate. We agree responsibilities and any external specialist fees before proceeding.")]),
   faq=[("I am selling a property. Should I speak to you first?", "Yes. We review the disposal and the interaction of income tax, capital gains tax and VAT before the sale, and coordinate transfer-duty matters with the conveyancer."),
        ("How should I pay myself from my company?", "We assess owner remuneration, dividends and loan accounts against the company's position and your personal tax before you implement a structure.")]),
- dict(slug="accounting", icon="book", short="Accounting & financial statements",
+ dict(slug="accounting", send=['Bank statements for the period (PDF or CSV)', 'Sales and purchase invoices', 'Payroll reports, if you have staff', 'Previous financial statements and trial balance'], icon="book", short="Accounting & financial statements",
   title="Accounting and financial reporting",
-  seo="Bookkeeping, Management Accounts &amp; Annual Financial Statements | Think Mybiz Accountants",
-  desc="Monthly bookkeeping, bank reconciliations, management accounts, historic catch-up and compiled annual financial statements (IFRS for SMEs) for companies, CCs, sole proprietors and trusts.",
+  seo="Bookkeeping &amp; Annual Financial Statements | Think Mybiz",
+  desc="Monthly bookkeeping, reconciliations, management accounts, catch-up work and compiled annual financial statements for SA businesses. Free consultation.",
   card="Bookkeeping, reconciliations, management accounts, catch-up work and annual financial statements.",
   lead="Reliable accounting gives business owners a usable view of performance and supports tax filings, finance applications and year-end reporting. We offer ongoing services and once-off catch-up work.",
   body=lambda: "".join([
@@ -214,10 +239,10 @@ SERVICES = [
    note("Resolving uncertain transactions", "We maintain a clear list of missing evidence and transactions needing client explanation. Queries are resolved through supporting documents and agreed treatment before the affected reports or returns are finalised.")]),
   faq=[("My books are a year or more behind. Can you catch up?", "Yes. We offer once-off historic bookkeeping recovery from bank statements and supporting records, followed by year-end adjustments, financial statements and tax returns."),
        ("Do you prepare financial statements for close corporations?", "Yes, including close corporation accounting officer work where the appointment and professional requirements are met.")]),
- dict(slug="business-compliance", icon="clipboard", short="CIPC, licences & tenders",
+ dict(slug="business-compliance", send=['Company registration documents (CoR14.3)', "Directors' and shareholders' ID copies (through a secure route)", 'Tax compliance status PIN, if you have one', 'The tender document or licence requirements you are working with'], icon="clipboard", short="CIPC, licences & tenders",
   title="CIPC, registrations, licences and tenders",
-  seo="CIPC Company Registration, Annual Returns, CSD, Tenders &amp; Licences | Think Mybiz Accountants",
-  desc="CIPC company registration, annual returns and beneficial ownership, CSD registration, tender compliance packs, CIDB and PSIRA documentation, business licence applications and B-BBEE affidavits.",
+  seo="CIPC, CSD, Tenders &amp; Business Licences | Think Mybiz",
+  desc="Company registration, CIPC annual returns, beneficial ownership, CSD registration, tender packs, CIDB, PSIRA, licences and B-BBEE affidavits.",
   card="Company registration, CIPC annual returns, CSD, tender packs, CIDB, PSIRA, licences and B-BBEE affidavits.",
   lead="We support the administrative requirements that sit alongside the accounts and tax returns, helping owners maintain consistent information across the relevant authorities.",
   body=lambda: "".join([
@@ -232,10 +257,10 @@ SERVICES = [
    note("A defined engagement", "The quotation identifies deliverables, exclusions, responsibilities and fees; external approval and third-party charges are addressed separately.")]),
   faq=[("Can you register a new company for me?", "Yes. We handle company registration with CIPC, and can then register the company for the taxes it needs and set up its books."),
        ("We want to tender for government work. Where do we start?", "We assist with CSD registration and profile maintenance, tax compliance status, and the financial and compliance documents in a tender pack, including CIDB or PSIRA documentation where relevant.")]),
- dict(slug="business-advisory", icon="chart", short="Business advisory",
+ dict(slug="business-advisory", send=['What you want to decide or achieve', 'Recent financial statements or management accounts', 'Bank statements and known upcoming costs'], icon="chart", short="Business advisory",
   title="Business advisory and funding support",
-  seo="Business Advisory, Budgets, Cash Flow &amp; Funding Applications | Think Mybiz Accountants",
-  desc="Practical business advice for South African owners: business structure, start-up registrations, pricing and budgets, cash-flow forecasts, business plans and financial information for funding and tenders.",
+  seo="Business Advisory, Budgets &amp; Funding Packs | Think Mybiz",
+  desc="Business structure, start-up advice, budgets, cash-flow forecasts, business plans and financial information for funding and tenders in South Africa.",
   card="Business structure, start-up advice, budgets, cash-flow forecasts, business plans and funding packs.",
   lead="Advisory engagements connect recommendations to the owner's financial information and compliance obligations, so decisions are made on reliable numbers.",
   body=lambda: "".join([
@@ -295,9 +320,81 @@ AREAS = [("Gauteng", "Johannesburg, Pretoria (Tshwane), Midrand, Centurion, Sand
          ("Free State", "Bloemfontein, Welkom, Bethlehem, Sasolburg"),
          ("Northern Cape", "Kimberley, Upington, Kathu")]
 
+# ------------------------------------------------------------------ city pages (genuine, not copy-paste doorway pages)
+CITIES = [
+ dict(path="/accountants-pretoria/", short="Pretoria & Centurion", city="Pretoria", province="Gauteng",
+  title="Accountants &amp; Tax Practitioners in Pretoria | Think Mybiz",
+  desc="Remote accounting, tax returns, VAT, payroll, SARS disputes and tax debt help for Pretoria and Centurion businesses and individuals. Free consultation.",
+  lead="Remote accounting and tax services for individuals and businesses in Pretoria, Centurion and the rest of Tshwane, from a SARS registered tax practitioner.",
+  areas="Pretoria CBD, Centurion, Hatfield, Menlyn, Montana, Soshanguve, Mabopane, Ga-Rankuwa, Mamelodi, Atteridgeville, Hammanskraal and Bronkhorstspruit",
+  focus=["sars-disputes", "tax-debt", "business-compliance"],
+  body="Many Pretoria clients come to us for SARS matters: verification letters, disputed assessments and tax debt, as well as tax clearance and CSD requirements for government and tender work. Because the work is done remotely, you do not need to travel; documents are sent electronically and meetings happen by phone or video call."),
+ dict(path="/accountants-johannesburg-midrand/", short="Johannesburg & Midrand", city="Johannesburg and Midrand", province="Gauteng",
+  title="Accountants in Johannesburg &amp; Midrand | Think Mybiz",
+  desc="Remote bookkeeping, tax returns, VAT, payroll and SARS dispute help for Johannesburg, Sandton and Midrand clients. SARS registered practitioner.",
+  lead="Remote accounting, tax and SARS compliance for businesses and individuals in Johannesburg, Sandton, Midrand and the East and West Rand.",
+  areas="Johannesburg CBD, Sandton, Randburg, Roodepoort, Midrand, Soweto, Alexandra, Kempton Park, Germiston, Benoni, Boksburg, Alberton and Krugersdorp",
+  focus=["accounting", "vat", "payroll"],
+  body="Johannesburg and Midrand businesses typically use us for monthly bookkeeping, VAT and payroll, so that the books, VAT201s and EMP201s stay reconciled every month and year-end work is quick. Individuals use us for ITR12 returns, rental income and SARS queries."),
+ dict(path="/accountants-polokwane/", short="Polokwane", city="Polokwane", province="Limpopo",
+  title="Accountants &amp; Tax Practitioners in Polokwane | Think Mybiz",
+  desc="Accounting, tax returns, VAT, payroll, CIPC, CSD and SARS help for Polokwane, Seshego and Mankweng clients, from a Limpopo-based tax practitioner.",
+  lead="Accounting, tax and compliance services for Polokwane, Seshego, Mankweng and the Capricorn district, from our Limpopo practice.",
+  areas="Polokwane CBD, Seshego, Mankweng, Lebowakgomo, Moletji, Ga-Maja and the wider Capricorn district",
+  focus=["business-compliance", "accounting", "business-tax"],
+  body="Being based in Limpopo, we understand the businesses that work here: contractors, transport and security companies, retailers and suppliers to government and mining. We help them keep CIPC, SARS, CSD and tender compliance in order alongside their monthly books and tax returns."),
+ dict(path="/accountants-mokopane/", short="Mokopane (head office)", city="Mokopane", province="Limpopo",
+  title="Accountants &amp; Tax Practitioners in Mokopane | Think Mybiz",
+  desc="Our head office: accounting, tax returns, VAT, payroll, SARS disputes, CIPC and tender compliance in Mokopane and Mahwelereng. Free consultation.",
+  lead="Our head office is at No 48 Rabe Street, Havenga Building, Mokopane. We serve Mokopane, Mahwelereng and the Waterberg, in person by arrangement or remotely.",
+  areas="Mokopane, Mahwelereng, Ga-Mashashane, Bakenberg, Mookgophong, Modimolle, Bela-Bela, Lephalale and the Mogalakwena villages",
+  focus=["individual-tax", "business-compliance", "tax-debt"],
+  body="As our home town, Mokopane is where clients can also meet us in person, by arrangement. Local clients use us for personal and company tax returns, CIPC registrations and annual returns, tax clearance PINs for tenders, and help with SARS debt and disputes."),
+]
+
+# ------------------------------------------------------------------ Insights articles (_src/articles/*.md)
+# Front matter: title, seo_title (<=60), description (<=160), date (YYYY-MM-DD), updated (optional),
+# service (slug of the related service page), sources (lines "- Title | URL"). Body: Markdown.
+import glob, markdown as _md
+def load_articles():
+    arts = []
+    for fp in sorted(f for f in glob.glob(os.path.join(OUT, "_src", "articles", "*.md")) if not f.endswith("README.md")):
+        raw = open(fp, encoding="utf-8").read()
+        assert raw.startswith("---"), fp
+        _, fm, body = raw.split("---", 2)
+        meta, sources, key = {}, [], None
+        for line in fm.strip().splitlines():
+            if line.startswith("  - ") or line.startswith("- "):
+                t, u = [x.strip() for x in line.strip()[2:].split("|", 1)]
+                sources.append((t, u))
+            elif ":" in line:
+                key, val = line.split(":", 1); meta[key.strip()] = val.strip()
+        meta["slug"] = os.path.splitext(os.path.basename(fp))[0]
+        meta["path"] = f'/insights/{meta["slug"]}/'
+        meta["sources"] = sources
+        meta["html"] = _md.markdown(body, extensions=["tables", "sane_lists"])
+        meta["words"] = len(body.split())
+        assert meta.get("service") in SVC, f'{fp}: unknown service {meta.get("service")}'
+        assert sources, f"{fp}: an article must list its official sources"
+        if meta.get("status", "published") == "published": arts.append(meta)
+    return sorted(arts, key=lambda a: a["date"], reverse=True)
+ARTICLES = load_articles()
+ARTICLE_DATES = {a["path"]: a.get("updated") or a["date"] for a in ARTICLES}
+def nice_date(d):
+    import datetime as _dt
+    return _dt.date.fromisoformat(d).strftime("%-d %B %Y")
+def article_cards(items):
+    return "".join(f'<a class="card" href="{a["path"]}"><span class="num">{nice_date(a["date"])}</span><h3 style="margin-top:6px">{E(a["title"])}</h3>'
+                   f'<p>{E(a["description"])}</p><span class="more">Read article →</span></a>' for a in items)
+def related_articles(slug):
+    rel = [a for a in ARTICLES if a["service"] == slug][:3]
+    if not rel: return ""
+    return "<h2>Related articles</h2><ul class=\"checks\">" + "".join(f'<li><a href="{a["path"]}">{E(a["title"])}</a></li>' for a in rel) + "</ul>"
+
 # ------------------------------------------------------------------ chrome
 NAV = [("Services", "/services/"), ("SARS disputes", "/services/sars-disputes/"), ("Tax debt", "/services/tax-debt/"),
        ("About", "/about/"), ("How we work", "/how-we-work/"), ("Service areas", "/service-areas/")]
+if ARTICLES: NAV.insert(3, ("Insights", "/insights/"))
 LOGO = '<picture><source srcset="/assets/img/logo.webp" type="image/webp"><img src="/assets/img/logo.png" alt="Think Mybiz Accountants &amp; Tax Practitioners" width="640" height="190"></picture>'
 
 def wa_link(text="Hi Think Mybiz, I would like assistance with "):
@@ -323,10 +420,10 @@ def footer():
     return f"""<footer class="site-footer"><div class="container"><div class="footer-grid">
 <div><a class="footer-logo" href="/">{LOGO}</a>
 <p style="margin-top:16px;max-width:330px">Accounting, tax, payroll and SARS compliance for businesses and individuals anywhere in South Africa. Accountable. Reliable. Compliant.</p>
-<p style="margin-top:10px">SARS registered tax practitioner {PR}</p></div>
+<p style="margin-top:10px">SARS registered tax practitioner {PR}</p>{social_links()}</div>
 <div><h4>Tax services</h4><ul>{svc}</ul></div>
 <div><h4>Business services</h4><ul>{svc2}<li><a href="/sars-letter/">Received a SARS letter?</a></li></ul></div>
-<div><h4>Contact</h4><ul><li><a href="tel:{TEL}">{PHONE}</a></li>{wa}<li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li>{ADDRESS}</li><li><a href="/service-areas/">Serving all nine provinces</a></li></ul></div>
+<div><h4>Contact</h4><ul><li><a href="tel:{TEL}">{PHONE}</a></li>{wa}<li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li>{ADDRESS}</li><li><a href="/service-areas/">Serving all nine provinces</a></li>{"".join(f'<li><a href="{c["path"]}">{c["short"]}</a></li>' for c in CITIES)}</ul></div>
 </div>
 <div class="footer-bottom"><span>© <span id="year">2026</span> {BRAND}. {E(LEGAL)}, reg. no. 2021/819201/07.</span>
 <span><a href="/privacy/">Privacy &amp; POPIA</a> · <a href="/contact/">Contact</a></span></div></div></footer>
@@ -340,12 +437,44 @@ ORG = {
  "address": {"@type": "PostalAddress", "streetAddress": "No 48 Rabe Street, Havenga Building", "addressLocality": "Mokopane",
              "addressRegion": "Limpopo", "postalCode": "0600", "addressCountry": "ZA"},
  "areaServed": {"@type": "Country", "name": "South Africa"},
- "founder": {"@type": "Person", "name": "MF Banda"}, "foundingDate": "2021-08-18", "vatID": "4010320630",
+ "founder": {"@id": DOMAIN + "/about/#mf-banda"}, "foundingDate": "2021-08-18", "vatID": "4010320630",
  "slogan": "Accountable. Reliable. Compliant. Focused on your growth.",
+ "priceRange": "Quoted per engagement",
  "knowsAbout": ["Income tax", "VAT", "Payroll", "SARS dispute resolution", "Tax debt", "Annual financial statements", "CIPC compliance"],
 }
 
-def page(path, title, desc, body, active="", schema=None, noindex=False):
+if any(SOCIAL.values()): ORG["sameAs"] = [u for u in SOCIAL.values() if u]
+if OPENING_HOURS: ORG["openingHours"] = OPENING_HOURS
+PERSON = {"@context": "https://schema.org", "@type": "Person", "@id": DOMAIN + "/about/#mf-banda", "name": "MF Banda",
+  "jobTitle": "Director and SARS registered tax practitioner", "worksFor": {"@id": DOMAIN + "/#practice"},
+  "hasCredential": [
+    {"@type": "EducationalOccupationalCredential", "credentialCategory": "Registered tax practitioner", "name": "SARS registered tax practitioner " + PR,
+     "recognizedBy": {"@type": "GovernmentOrganization", "name": "South African Revenue Service", "url": "https://www.sars.gov.za/"}},
+    {"@type": "EducationalOccupationalCredential", "credentialCategory": "Professional designation", "name": "Tax Technician (SA)",
+     "recognizedBy": {"@type": "Organization", "name": "South African Institute of Taxation", "url": "https://www.thesait.org.za/"}},
+    {"@type": "EducationalOccupationalCredential", "credentialCategory": "Professional designation", "name": "Chartered Business Accountant in Commerce",
+     "recognizedBy": {"@type": "Organization", "name": "CIBA", "url": "https://www.myciba.org/"}},
+    {"@type": "EducationalOccupationalCredential", "credentialCategory": "Professional designation", "name": "Certified Financial Accountant",
+     "recognizedBy": {"@type": "Organization", "name": "ICBA"}}],
+  "knowsAbout": ["South African income tax", "VAT", "SARS dispute resolution", "Tax debt", "Payroll taxes"]}
+
+def analytics_head():
+    if not GA_ID: return ""
+    return (f'<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}'
+            f'gtag("consent","default",{{analytics_storage:"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied"}});'
+            f'try{{if(localStorage.getItem("tmb_consent")==="yes")gtag("consent","update",{{analytics_storage:"granted"}})}}catch(e){{}}'
+            f'gtag("js",new Date());gtag("config","{GA_ID}");</script>'
+            f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>')
+def consent_banner():
+    if not GA_ID: return ""
+    return ('<div class="consent-bar" hidden><p>We use Google Analytics cookies to understand how visitors use this site, only if you agree. '
+            '<a href="/privacy/">Privacy notice</a></p><div><button class="btn btn-sm btn-outline" data-consent="no">Decline</button>'
+            '<button class="btn btn-sm btn-primary" data-consent="yes">Accept</button></div></div>')
+
+PAGES_HASH = {}
+def page(path, title, desc, body, active="", schema=None, noindex=False, og_type="website", head_extra=""):
+    tl, dl = len(html.unescape(title)), len(html.unescape(desc))
+    assert tl <= 60 and (dl <= 160 or noindex), f"{path}: title {tl} chars / description {dl} chars (max 60 / 160)"
     canon = DOMAIN + path
     ld = [ORG] + (schema or [])
     lds = "".join(f'<script type="application/ld+json">{json.dumps(s, ensure_ascii=False)}</script>' for s in ld)
@@ -353,19 +482,21 @@ def page(path, title, desc, body, active="", schema=None, noindex=False):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title><meta name="description" content="{desc}">
 <link rel="canonical" href="{canon}">{'<meta name="robots" content="noindex">' if noindex else ''}
-<meta property="og:type" content="website"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
+<meta property="og:type" content="{og_type}"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
 <meta property="og:url" content="{canon}"><meta property="og:site_name" content="{BRAND}"><meta property="og:image" content="{DOMAIN}/assets/img/og.png">
 <meta property="og:locale" content="en_ZA"><meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#001a40">
+<meta name="theme-color" content="#001a40">{f'<meta name="google-site-verification" content="{E(GSC_VERIFY)}">' if GSC_VERIFY else ""}{head_extra}
 <link rel="icon" href="/assets/img/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v={ver("assets/css/style.css")}">{lds}
-</head><body>{header(active)}<main id="main">{body}</main>{footer()}</body></html>"""
+<link rel="stylesheet" href="/assets/css/style.css?v={ver("assets/css/style.css")}">{lds}{analytics_head()}
+<link rel="alternate" type="application/rss+xml" title="Think Mybiz Insights" href="/insights/feed.xml">
+</head><body>{header(active)}<main id="main">{body}</main>{footer()}{consent_banner()}</body></html>"""
     fp = os.path.join(OUT, path.strip("/"), "index.html") if path.endswith("/") else os.path.join(OUT, path.strip("/"))
     os.makedirs(os.path.dirname(fp), exist_ok=True)
     open(fp, "w", encoding="utf-8").write(out)
-    if not noindex: SITEMAP.append(path)
+    if not noindex:
+        SITEMAP.append(path); PAGES_HASH[path] = hashlib.md5((title + desc + body).encode()).hexdigest()
 
 SITEMAP = []
 def ver(rel):  # cache-busting version from file content, so CDN/browser caches pick up CSS/JS changes at once
@@ -455,9 +586,10 @@ home = f"""<section class="hero"><div class="container hero-grid"><div>
 <div class="chips" style="margin-top:18px">{"".join(f'<span class="chip">{a}</span>' for a,_ in AREAS)}</div>
 <a class="btn btn-outline" href="/service-areas/" style="margin-top:20px">Service areas</a></div>
 <div><span class="eyebrow">Common questions</span><h2 style="margin:.35em 0 .6em">Frequently asked</h2>{faq_html(GEN_FAQ)}</div></div></div></section>
+{('<section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Insights</span><h2>Latest guidance</h2></div><div class="grid g3">' + article_cards(ARTICLES[:3]) + '</div><p style="margin-top:20px"><a href="/insights/">All insights →</a></p></div></section>') if ARTICLES else ""}
 {cta()}"""
-page("/", "Accountants &amp; Tax Practitioners in South Africa | SARS, VAT, Payroll | Think Mybiz",
-     "SARS registered tax practitioner offering accounting, tax returns, VAT, payroll, SARS disputes, tax debt help and CIPC compliance to businesses and individuals anywhere in South Africa. Free consultation.",
+page("/", "Accountants &amp; Tax Practitioners South Africa | Think Mybiz",
+     "SARS registered tax practitioner: tax returns, VAT, payroll, SARS disputes, tax debt and CIPC for clients anywhere in South Africa. Free consultation.",
      home, "/", [faq_schema(GEN_FAQ), {"@context": "https://schema.org", "@type": "WebSite", "name": BRAND_TXT, "url": DOMAIN + "/"}])
 
 # ------------------------------------------------------------------ SERVICES HUB
@@ -475,8 +607,8 @@ hub = hero("Our services", "Accounting, tax and compliance services",
 <p class="lead">We serve individuals, start-ups and established small and medium businesses, including companies, close corporations, sole proprietors and trusts.</p></div>
 <div class="chips">{"".join(f'<span class="chip">{s}</span>' for s in ["Construction","Security","Transport &amp; logistics","Retail","Hospitality","Property","Professional services","Nonprofit organisations","Employees &amp; directors","Landlords","Independent contractors"])}</div></div></section>
 {cta()}"""
-page("/services/", "Accounting &amp; Tax Services in South Africa | Think Mybiz Accountants",
-     "Individual and business tax, VAT, payroll, SARS disputes, tax debt, tax planning, accounting and financial statements, CIPC, licences, tenders and business advisory for clients anywhere in South Africa.",
+page("/services/", "Accounting &amp; Tax Services in South Africa | Think Mybiz",
+     "Tax returns, VAT, payroll, SARS disputes, tax debt, accounting, CIPC, licences, tenders and business advice for clients anywhere in South Africa.",
      hub, "/services/", [crumbs_schema([("Home", "/"), ("Services", "/services/")])])
 
 # ------------------------------------------------------------------ SERVICE PAGES
@@ -485,7 +617,8 @@ for s in SERVICES:
     side = "".join(f'<li><a href="/services/{x["slug"]}/"{" class=active" if x is s else ""}>{x["short"]}</a></li>' for x in SERVICES)
     body = hero("Services", s["title"], s["lead"], [("Home", "/"), ("Services", "/services/"), (s["short"], None)]) + f"""
 <section class="section"><div class="container two-col"><div class="content">{s["body"]()}
-<h2>Frequently asked questions</h2>{faq_html(s["faq"])}</div>
+<h2>What to send us</h2><p>To get started, these are usually enough. We will tell you if anything else is needed.</p>{ul([E(x) for x in s["send"]])}
+{related_articles(s["slug"])}<h2>Frequently asked questions</h2>{faq_html(s["faq"])}</div>
 <aside class="aside"><div class="card" style="background:var(--navy-900);border-color:var(--navy-900);color:#c9d4ec">
 <h3 style="color:#fff">Talk to a tax practitioner</h3><p style="font-size:.93rem">Free initial consultation. Remote service anywhere in South Africa.</p>
 <a class="btn btn-primary" href="/contact/?service={s["slug"]}" style="margin-top:14px;width:100%;justify-content:center">Book a consultation</a>
@@ -517,8 +650,8 @@ letter = hero("SARS notices", "Received a letter from SARS? Here is what to do."
 <a class="btn btn-primary" href="/contact/?service=sars-disputes" style="margin-top:14px;width:100%;justify-content:center">Get help with a SARS notice</a>
 <a class="btn btn-ghost" href="tel:{TEL}" style="margin-top:10px;width:100%;justify-content:center">Call {PHONE}</a></div>
 <div class="card"><h3>Related services</h3><ul><li><a href="/services/sars-disputes/">SARS disputes &amp; resolution</a></li><li><a href="/services/tax-debt/">Tax debt &amp; compliance recovery</a></li><li><a href="/services/vat/">VAT verifications</a></li><li><a href="/services/payroll/">Employer tax queries</a></li></ul></div></aside></div></section>{cta("Don't let a SARS deadline pass", "Send us the notice today. We review the facts and the available remedy before preparing a response.")}"""
-page("/sars-letter/", "Received a SARS Letter, Audit or Final Demand? | Think Mybiz Accountants",
-     "What to do when SARS sends a verification request, audit letter, assessment, penalty or final demand. A SARS registered tax practitioner can review it and prepare the right response.",
+page("/sars-letter/", "Received a SARS Letter or Final Demand? | Think Mybiz",
+     "SARS verification, audit, assessment, penalty or final demand? What to send us, the deadlines that matter and how a registered practitioner responds.",
      letter, "", [crumbs_schema([("Home", "/"), ("Received a SARS letter?", "/sars-letter/")])])
 
 # ------------------------------------------------------------------ ABOUT
@@ -533,13 +666,13 @@ about = hero("About us", "Our practice",
 <p style="font-size:.88rem;color:var(--muted);margin-top:10px">The registered company name above retains the CIPC spelling. Our client-facing brand is Think Mybiz Accountants and Tax Practitioners.</p>
 <h2>Our purpose and approach</h2><p>Our purpose is to make accounting and tax compliance understandable and manageable. We explain what is required, agree the scope and fees, and keep records of the work completed. We aim to build lasting client relationships through accurate work, confidentiality and direct communication.</p>
 <h2>Digital service with practitioner oversight</h2><p>Taxnify is our base accounting and compliance software platform. Electronic records and remote meetings support our service, while professional judgement, review and client authorisation remain central to each engagement.</p>
-<h2>Serving clients throughout South Africa</h2><p>Based in Mokopane, Limpopo, with remote services available in all nine provinces, including Johannesburg, Pretoria and Midrand.</p>
+<h2>Serving clients throughout South Africa</h2><p>Based in Mokopane, Limpopo, with remote services available in all nine provinces, including <a href="/accountants-johannesburg-midrand/">Johannesburg and Midrand</a>, <a href="/accountants-pretoria/">Pretoria</a> and <a href="/accountants-polokwane/">Polokwane</a>. See <a href="/how-we-work/">how we work</a>, our <a href="/services/">services</a>, or what to do if you have <a href="/sars-letter/">received a SARS letter</a>.</p>
 </div><aside class="aside"><div class="card"><h3>At a glance</h3><ul class="checks" style="margin-top:8px">
 <li>SARS registered tax practitioner {PR}</li><li>SAIT Tax Technician (SA)</li><li>Chartered Business Accountant in Commerce (CIBA)</li><li>Certified Financial Accountant (ICBA)</li><li>Company incorporated 2021</li><li>Remote service in all nine provinces</li></ul>
 <a class="btn btn-primary" href="/contact/" style="margin-top:12px;width:100%;justify-content:center">Book a free consultation</a></div></aside></div></section>{cta()}"""
-page("/about/", "About Think Mybiz Accountants &amp; Tax Practitioners | MF Banda, SARS PR-0034776",
-     "Think Mybiz Accountants and Tax Practitioners is led by MF Banda, SARS registered tax practitioner (PR-0034776) and SAIT Tax Technician (SA), serving clients across South Africa from Mokopane, Limpopo.",
-     about, "/about/", [crumbs_schema([("Home", "/"), ("About", "/about/")])])
+page("/about/", "About Think Mybiz | MF Banda, SARS Tax Practitioner",
+     "Led by MF Banda, SARS registered tax practitioner (PR-0034776) and SAIT Tax Technician (SA), serving clients across South Africa from Mokopane.",
+     about, "/about/", [PERSON, crumbs_schema([("Home", "/"), ("About", "/about/")])])
 
 # ------------------------------------------------------------------ HOW WE WORK
 how = hero("How we work", "Working with us",
@@ -557,22 +690,24 @@ how = hero("How we work", "Working with us",
 <div><span class="eyebrow">Confidentiality and client responsibilities</span><h2 style="margin:.35em 0 .6em">Working together properly</h2>
 <p>We handle personal and financial information with regard to POPIA and professional confidentiality. Clients provide complete and accurate records, approve submissions as agreed and make payments by the required dates. Access and authority are arranged through the applicable taxpayer and practitioner processes.</p></div></div></section>
 <section class="section"><div class="container"><div class="band"><div><span class="eyebrow light">Remote by design</span><h2 style="margin:.35em 0 .45em">No office visit needed</h2>
-<p>Documents are sent electronically and filed in a dedicated client folder per financial year. Work is prepared on Taxnify and reviewed by the practitioner before anything is submitted, and only with your approval.</p></div>
+<p>Documents are sent electronically and filed in a dedicated client folder per financial year. Work is prepared on Taxnify and reviewed by the practitioner before anything is submitted, and only with your approval. See our <a href="/services/" style="color:#7fe0a0">services</a> or <a href="/service-areas/" style="color:#7fe0a0">service areas</a>.</p></div>
 <div><a class="btn btn-primary" href="/contact/">Book a free consultation</a></div></div></div></section>{cta()}"""
-page("/how-we-work/", "How We Work | Remote Accounting &amp; Tax Services | Think Mybiz Accountants",
-     "How Think Mybiz Accountants works with clients anywhere in South Africa: free consultation, written scope and fees, secure document collection, practitioner review and submission only with your approval.",
+page("/how-we-work/", "How We Work: Remote Accounting &amp; Tax | Think Mybiz",
+     "Free consultation, written scope and fees, secure online documents, practitioner review and submission only with your approval, anywhere in SA.",
      how, "/how-we-work/", [crumbs_schema([("Home", "/"), ("How we work", "/how-we-work/")])])
 
 # ------------------------------------------------------------------ SERVICE AREAS
 areas = hero("Service areas", "Accountants and tax practitioners serving all of South Africa",
   "Based in Mokopane, Limpopo, with remote services available in all nine provinces. Documents are sent electronically, meetings happen by phone or video call, and office consultations are available by arrangement.",
   [("Home", "/"), ("Service areas", None)]) + f"""
-<section class="section"><div class="container"><div class="grid g3">{"".join(f'<div class="card">{icon("pin")}<h3>{p}</h3><p>{t}</p></div>' for p,t in AREAS)}</div>
+<section class="section"><div class="container"><div class="section-head"><span class="eyebrow">City pages</span><h2>Where many of our clients are</h2></div>
+<div class="grid g4" style="margin-bottom:34px">{"".join(f'<a class="card" href="{c["path"]}">{icon("pin")}<h3>{c["short"]}</h3><p>{c["province"]}</p><span class="more">View →</span></a>' for c in CITIES)}</div>
+<div class="grid g3">{"".join(f'<div class="card">{icon("pin")}<h3>{p}</h3><p>{t}</p></div>' for p,t in AREAS)}</div>
 {note("Wherever you are", "Every service on this website, from tax returns to SARS disputes, is available remotely. Distance does not change the scope, the review or the practitioner responsible for your work.")}</div></section>
 <section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">Popular services</span><h2>What clients across South Africa ask us for</h2></div>
 <div class="grid g3">{svc_cards([SVC[k] for k in ("individual-tax","sars-disputes","tax-debt","vat","accounting","business-compliance")])}</div></div></section>{cta()}"""
-page("/service-areas/", "Accountants in Johannesburg, Pretoria, Midrand, Polokwane &amp; Nationwide | Think Mybiz",
-     "Remote accounting, tax and SARS services for clients in Gauteng (Johannesburg, Pretoria, Midrand), Limpopo (Mokopane, Polokwane) and every other South African province.",
+page("/service-areas/", "Accountants Serving All of South Africa | Think Mybiz",
+     "Remote accounting, tax and SARS services in Gauteng (Johannesburg, Pretoria, Midrand), Limpopo (Mokopane, Polokwane) and every other province.",
      areas, "/service-areas/", [crumbs_schema([("Home", "/"), ("Service areas", "/service-areas/")])])
 
 # ------------------------------------------------------------------ CONTACT
@@ -607,8 +742,8 @@ contact = hero("Contact", "Book a free consultation",
 </div>
 {note("Urgent SARS matter?", "Send the full notice, assessment date, relevant tax type and period, and any existing case reference. Request a secure route before sending sensitive supporting documents.")}
 </div></div></section>"""
-page("/contact/", "Contact Think Mybiz Accountants | Free Consultation | 066 210 5631",
-     "Contact Think Mybiz Accountants and Tax Practitioners: call 066 210 5631, email accounts@thinkmybiz.co.za or send an enquiry. Remote service anywhere in South Africa.",
+page("/contact/", "Contact Think Mybiz | Free Tax Consultation",
+     "Call or WhatsApp 066 210 5631, email accounts@thinkmybiz.co.za or send an enquiry. Free consultation; remote service anywhere in South Africa.",
      contact, "/contact/", [crumbs_schema([("Home", "/"), ("Contact", "/contact/")])])
 
 # ------------------------------------------------------------------ PRIVACY
@@ -620,22 +755,110 @@ priv = hero("Privacy", "Privacy &amp; POPIA notice", "How this website handles p
 <h2>Sensitive information</h2><p>Please do not send identity numbers, tax reference numbers or supporting documents through the website form. Ask us for a secure route for sensitive documents.</p>
 <h2>Client information</h2><p>Client information is handled with professional confidentiality. Access and authority to act with SARS and other authorities are arranged through the applicable taxpayer and practitioner processes.</p>
 <h2>Your rights</h2><p>You may ask what personal information we hold about you, ask us to correct or delete it, or object to its processing, subject to our legal record-keeping obligations. Contact us at <a href="mailto:{EMAIL}">{EMAIL}</a>. You may also lodge a complaint with the Information Regulator of South Africa.</p>
-<h2>Cookies</h2><p>This website does not use advertising or tracking cookies. Fonts are loaded from Google Fonts.</p>
+<h2>Acknowledgement email</h2><p>When you send an enquiry, we send one automatic email to the address you gave, confirming that we received it.</p>
+<h2>Cookies and analytics</h2>{('<p>With your consent, this website uses Google Analytics to count visits and enquiries (for example, which pages lead to an enquiry). Analytics cookies are only set if you click Accept on the cookie notice; you can withdraw consent by clearing this site&#39;s data in your browser. We do not use advertising cookies.</p>' if GA_ID else '<p>This website does not use advertising or tracking cookies.</p>')}<p>Fonts are loaded from Google Fonts.</p>
 </div></section>"""
-page("/privacy/", "Privacy &amp; POPIA Notice | Think Mybiz Accountants", "How Think Mybiz Accountants and Tax Practitioners handles personal information submitted through this website, in line with POPIA.", priv, "")
+page("/privacy/", "Privacy &amp; POPIA Notice | Think Mybiz", "How Think Mybiz Accountants and Tax Practitioners handles personal information submitted through this website, in line with POPIA.", priv, "")
+
+# ------------------------------------------------------------------ CITY PAGES
+for c in CITIES:
+    towns_line = c["areas"]
+    body = hero(f'{c["province"]} · {c["city"]}', f'Accountants and tax practitioners for {c["city"]}', c["lead"],
+                [("Home", "/"), ("Service areas", "/service-areas/"), (c["short"], None)]) + f"""
+<section class="section"><div class="container two-col"><div class="content">
+<h2>Accounting and tax help in {c["city"]}</h2><p>{c["body"]}</p>
+<p>All work is prepared and reviewed under MF Banda, SARS registered tax practitioner ({PR}), and nothing is submitted to SARS or CIPC without your approval.</p>
+<h2>Areas we serve around {c["city"]}</h2><p>{towns_line}. Not listed? We work remotely with clients anywhere in South Africa.</p>
+<h2>Services {c["city"]} clients use most</h2></div>
+<aside class="aside"><div class="card" style="background:var(--navy-900);border-color:var(--navy-900);color:#c9d4ec">
+<h3 style="color:#fff">Free consultation</h3><p style="font-size:.93rem">Remote service for {c["city"]} by phone, WhatsApp or video call.</p>
+<a class="btn btn-primary" href="/contact/" style="margin-top:14px;width:100%;justify-content:center">Book a consultation</a>
+<a class="btn btn-ghost" href="tel:{TEL}" data-track="call" style="margin-top:10px;width:100%;justify-content:center">Call {PHONE}</a></div></aside></div>
+<div class="container" style="margin-top:6px"><div class="grid g3">{svc_cards([SVC[k] for k in c["focus"]])}</div>
+<p style="margin-top:22px"><a href="/services/">See all services →</a></p></div></section>
+<section class="section alt"><div class="container"><div class="section-head"><span class="eyebrow">How remote service works</span><h2>No office visit needed</h2></div>
+<div class="grid g3"><div class="card">{icon("phone")}<h3>1. Free consultation</h3><p>Call, WhatsApp or send an enquiry. We review your position and urgent dates.</p></div>
+<div class="card">{icon("cloud")}<h3>2. Documents online</h3><p>Send documents electronically; we agree a secure route for sensitive ones.</p></div>
+<div class="card">{icon("check")}<h3>3. Prepared, reviewed, approved</h3><p>Work is prepared and reviewed by the practitioner and submitted only with your approval.</p></div></div></div></section>{cta()}"""
+    page(c["path"], c["title"], c["desc"], body, "/service-areas/",
+         [crumbs_schema([("Home", "/"), ("Service areas", "/service-areas/"), (c["short"], c["path"])]),
+          {"@context": "https://schema.org", "@type": "Service", "name": f'Accounting and tax services in {c["city"]}', "provider": {"@id": DOMAIN + "/#practice"},
+           "areaServed": {"@type": "City", "name": c["city"].split(" and ")[0]}}])
+
+# ------------------------------------------------------------------ INSIGHTS
+import shutil
+shutil.rmtree(os.path.join(OUT, "insights"), ignore_errors=True)  # generated only; rebuilt from _src/articles
+from urllib.parse import quote as _q
+SHARE = lambda url, t: (f'<div class="share"><span>Share:</span>'
+    f'<a href="https://wa.me/?text={_q(t + " " + url)}" target="_blank" rel="noopener" data-track="share_whatsapp">WhatsApp</a>'
+    f'<a href="https://www.linkedin.com/sharing/share-offsite/?url={_q(url)}" target="_blank" rel="noopener" data-track="share_linkedin">LinkedIn</a>'
+    f'<a href="https://www.facebook.com/sharer/sharer.php?u={_q(url)}" target="_blank" rel="noopener" data-track="share_facebook">Facebook</a>'
+    f'<button type="button" data-copy="{url}">Copy link</button></div>')
+for i, a in enumerate(ARTICLES):
+    url = DOMAIN + a["path"]; svc = SVC[a["service"]]
+    upd = f' · Updated {nice_date(a["updated"])}' if a.get("updated") else ""
+    srcs = "".join(f'<li><a href="{E(u)}" target="_blank" rel="noopener">{E(t)}</a></li>' for t, u in a["sources"])
+    others = [x for x in ARTICLES if x is not a][:4]
+    body = f"""<section class="hero page-hero"><div class="container"><div class="crumbs"><a href="/">Home</a> / <a href="/insights/">Insights</a></div>
+<span class="eyebrow light">{svc["short"]}</span><h1 style="max-width:900px">{E(a["title"])}</h1><p class="lead">{E(a["description"])}</p>
+<p class="byline">By <a href="/about/">MF Banda</a>, SARS registered tax practitioner {PR} · Published {nice_date(a["date"])}{upd}</p></div></section>
+<section class="section"><div class="container two-col"><article class="content article">{a["html"]}
+<div class="sources"><h2>Official sources</h2><p>Checked on the publication date. Rules change; always confirm against the source.</p><ul>{srcs}</ul></div>
+{note("General information, not advice", "This article explains general rules. Your position depends on your facts; contact us for advice on your situation.")}
+{SHARE(url, a["title"])}</article>
+<aside class="aside"><div class="card" style="background:var(--navy-900);border-color:var(--navy-900);color:#c9d4ec">
+<h3 style="color:#fff">Need help with this?</h3><p style="font-size:.93rem">{svc["card"]}</p>
+<a class="btn btn-primary" href="/contact/?service={svc["slug"]}" style="margin-top:14px;width:100%;justify-content:center">Book a free consultation</a>
+<a class="btn btn-ghost" href="{svc and "/services/" + svc["slug"] + "/"}" style="margin-top:10px;width:100%;justify-content:center">{svc["short"]}</a></div>
+{('<div class="card"><h3>More insights</h3><ul>' + "".join(f'<li><a href="{x["path"]}">{E(x["title"])}</a></li>' for x in others) + '</ul></div>') if others else ""}</aside></div></section>{cta()}"""
+    art_ld = {"@context": "https://schema.org", "@type": "Article", "headline": a["title"], "description": a["description"],
+              "datePublished": a["date"], "dateModified": a.get("updated") or a["date"], "mainEntityOfPage": url,
+              "image": DOMAIN + "/assets/img/og.png", "wordCount": a["words"],
+              "author": {"@id": DOMAIN + "/about/#mf-banda"}, "publisher": {"@id": DOMAIN + "/#practice"},
+              "citation": [u for _, u in a["sources"]]}
+    page(a["path"], a["seo_title"], a["description"], body, "/insights/",
+         [art_ld, PERSON, crumbs_schema([("Home", "/"), ("Insights", "/insights/"), (a["title"], a["path"])])], og_type="article",
+         head_extra=f'<meta property="article:published_time" content="{a["date"]}">')
+if ARTICLES:
+    ins = hero("Insights", "Tax and compliance insights",
+      "Practical guidance on SARS, tax debt, VAT, payroll and business compliance, written and reviewed by a SARS registered tax practitioner and based on official sources.",
+      [("Home", "/"), ("Insights", None)], actions=False) + f"""
+<section class="section"><div class="container"><div class="grid g3">{article_cards(ARTICLES)}</div></div></section>{cta()}"""
+    page("/insights/", "Tax &amp; SARS Insights for South Africans | Think Mybiz",
+         "Practical, source-checked guidance on SARS letters, objections, tax debt, VAT, payroll and business compliance from a registered tax practitioner.",
+         ins, "/insights/", [crumbs_schema([("Home", "/"), ("Insights", "/insights/")])])
+os.makedirs(os.path.join(OUT, "insights"), exist_ok=True)
+with open(os.path.join(OUT, "insights", "feed.xml"), "w", encoding="utf-8") as f:
+    import email.utils as _eu, datetime as _dt
+    f.write('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>Think Mybiz Insights</title>'
+            f'<link>{DOMAIN}/insights/</link><description>Tax and compliance insights from Think Mybiz Accountants &amp; Tax Practitioners</description><language>en-za</language>\n')
+    for a in ARTICLES:
+        d = _eu.format_datetime(_dt.datetime.fromisoformat(a["date"] + "T08:00:00+02:00"))
+        f.write(f'<item><title>{E(a["title"])}</title><link>{DOMAIN}{a["path"]}</link><guid>{DOMAIN}{a["path"]}</guid><pubDate>{d}</pubDate><description>{E(a["description"])}</description></item>\n')
+    f.write("</channel></rss>\n")
 
 # ------------------------------------------------------------------ 404
 nf = hero("Page not found", "We couldn't find that page", "The page may have moved. Try our services, or contact us directly.", actions=False) + \
      f'<section class="section"><div class="container"><div class="grid g3">{svc_cards(SERVICES[:6])}</div></div></section>'
-page("/404.html", "Page not found | Think Mybiz Accountants", "Page not found.", nf, "", noindex=True)
+page("/404.html", "Page not found | Think Mybiz", "Page not found.", nf, "", noindex=True)
 
 # ------------------------------------------------------------------ sitemap, robots, htaccess
+import datetime
+LM_FILE = os.path.join(OUT, "_src", "lastmod.json")
+try: LM = json.load(open(LM_FILE))
+except Exception: LM = {}
+today = datetime.date.today().isoformat()
+for pth, h in PAGES_HASH.items():
+    if LM.get(pth, {}).get("hash") != h: LM[pth] = {"hash": h, "date": ARTICLE_DATES.get(pth, today)}
+LM = {k: v for k, v in LM.items() if k in PAGES_HASH}
+json.dump(LM, open(LM_FILE, "w"), indent=1, sort_keys=True)
 with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
     f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
     for p in SITEMAP:
-        pr = "1.0" if p == "/" else ("0.9" if p.startswith("/services/") or p == "/sars-letter/" else "0.7")
-        f.write(f"  <url><loc>{DOMAIN}{p}</loc><priority>{pr}</priority></url>\n")
+        pr = "1.0" if p == "/" else ("0.9" if p.startswith("/services/") or p == "/sars-letter/" else ("0.8" if p.startswith("/insights/") or p.startswith("/accountants-") else "0.7"))
+        f.write(f"  <url><loc>{DOMAIN}{p}</loc><lastmod>{LM[p]['date']}</lastmod><priority>{pr}</priority></url>\n")
     f.write("</urlset>\n")
+open(os.path.join(OUT, INDEXNOW_KEY + ".txt"), "w").write(INDEXNOW_KEY)
 open(os.path.join(OUT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /_src/\n\nSitemap: {DOMAIN}/sitemap.xml\n")
 open(os.path.join(OUT, ".htaccess"), "w").write("""Options -Indexes
 RewriteEngine On

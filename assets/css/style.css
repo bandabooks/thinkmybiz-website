@@ -194,6 +194,36 @@ a.card:hover{border-color:var(--green);transform:translateY(-2px)}
 .footer-logo img{height:44px;width:auto}
 .footer-bottom{border-top:1px solid rgba(255,255,255,.1);margin-top:40px;padding-top:20px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:.8rem;color:#8193b4}
 
+/* Social icons, articles, share, consent */
+.social{display:flex;gap:10px;margin-top:16px}
+.social a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#fff}
+.social a:hover{background:var(--green)}
+.social svg{width:18px;height:18px}
+.byline{margin-top:18px;font-size:.92rem;color:#b9c8e6}
+.byline a{color:#fff;font-weight:600}
+.article h2{font-size:1.4rem;margin:1.5em 0 .5em}
+.article h3{margin:1.2em 0 .4em}
+.article p,.article li{font-size:1.02rem;line-height:1.75}
+.article ul,.article ol{margin:.4em 0 1em 1.3em}
+.article li{margin-bottom:.35em}
+.article table{width:100%;border-collapse:collapse;margin:1em 0;font-size:.95rem}
+.article th,.article td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+.article th{background:var(--bg);color:var(--navy-900)}
+.article blockquote{border-left:4px solid var(--green);background:var(--green-50);padding:12px 18px;border-radius:0 10px 10px 0;margin:1em 0}
+.sources{margin-top:32px;padding:20px 22px;background:var(--bg);border-radius:12px}
+.sources h2{font-size:1.1rem;margin:0 0 6px}
+.sources p{font-size:.9rem;color:var(--muted)}
+.sources ul{margin:.6em 0 0 1.2em}
+.sources li{font-size:.92rem}
+.share{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:26px}
+.share span{font-weight:700;color:var(--ink);font-size:.92rem}
+.share a,.share button{font:inherit;font-size:.86rem;font-weight:600;padding:7px 13px;border-radius:20px;border:1.5px solid var(--line);background:#fff;color:var(--navy-900);cursor:pointer;text-decoration:none}
+.share a:hover,.share button:hover{border-color:var(--green);color:var(--green)}
+.consent-bar{position:fixed;left:16px;right:16px;bottom:16px;z-index:80;max-width:720px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 40px rgba(0,26,64,.2);padding:16px 18px;display:flex;gap:16px;align-items:center;justify-content:space-between;font-size:.92rem}
+.consent-bar[hidden]{display:none}
+.consent-bar div{display:flex;gap:8px;flex:none}
+@media (max-width:640px){.consent-bar{flex-direction:column;align-items:stretch;bottom:60px}.consent-bar div{justify-content:flex-end}}
+
 /* Sticky mobile call bar */
 .mbar{display:none}
 

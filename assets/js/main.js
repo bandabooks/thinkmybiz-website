@@ -6,6 +6,33 @@
   });
   var y = document.getElementById("year"); if (y) y.textContent = new Date().getFullYear();
 
+  // Lead tracking: sends events to Google Analytics only when it is enabled and the visitor accepted cookies.
+  function track(name, params) { if (typeof window.gtag === "function") window.gtag("event", name, params || {}); }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a, button"); if (!a) return;
+    var h = a.getAttribute("href") || "";
+    if (h.indexOf("tel:") === 0) track("click_call", { link_url: h, page_path: location.pathname });
+    else if (h.indexOf("wa.me/") > -1 && !a.hasAttribute("data-track")) track("click_whatsapp", { page_path: location.pathname });
+    else if (h.indexOf("mailto:") === 0) track("click_email", { page_path: location.pathname });
+    else if (a.hasAttribute("data-track")) track(a.getAttribute("data-track"), { page_path: location.pathname });
+    if (a.hasAttribute("data-copy")) {
+      var u = a.getAttribute("data-copy");
+      if (navigator.clipboard) navigator.clipboard.writeText(u).then(function () { a.textContent = "Link copied"; });
+    }
+  });
+  // Cookie consent (shown only when analytics is configured).
+  var cb = document.querySelector(".consent-bar");
+  if (cb) {
+    var seen = null; try { seen = localStorage.getItem("tmb_consent"); } catch (e) {}
+    if (!seen) cb.hidden = false;
+    cb.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-consent]"); if (!b) return;
+      var v = b.getAttribute("data-consent"); try { localStorage.setItem("tmb_consent", v); } catch (e2) {}
+      if (v === "yes" && typeof window.gtag === "function") window.gtag("consent", "update", { analytics_storage: "granted" });
+      cb.hidden = true;
+    });
+  }
+
   var f = document.getElementById("enquiry");
   if (!f) return;
   // Pre-select a service from ?service=
@@ -131,7 +158,7 @@
     fetch("/contact.php", { method: "POST", body: d, headers: { "Accept": "application/json" } })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (r) {
-        if (r.ok && r.j.ok) { f.reset(); if (prov) prov.dispatchEvent(new Event("change")); ok.style.display = "block"; }
+        if (r.ok && r.j.ok) { track("generate_lead", { service: d.get("service"), province: d.get("province") }); f.reset(); if (prov) prov.dispatchEvent(new Event("change")); ok.style.display = "block"; }
         else { err.textContent = (r.j && r.j.error) || "Your message could not be sent."; err.style.display = "block"; }
       })
       .catch(function () { mailtoFallback(d); })

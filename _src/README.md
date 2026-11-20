@@ -15,14 +15,28 @@ Hand-edited files (not generated): `assets/css/style.css`, `assets/js/main.js`, 
 
 `/_src/` is blocked from public access by `.htaccess`.
 
+## Insights (articles)
+
+Articles live in `_src/articles/*.md` (format in `_src/articles/README.md`). The build turns each into `/insights/<slug>/` with Article structured data, adds it to the Insights index, the home page, the related service page, the sitemap and `/insights/feed.xml`. The Insights menu item appears once at least one article is published.
+
+Publishing is approval-gated: new articles arrive as pull requests on a branch; merging the pull request into `main` publishes them.
+
+`_src/lastmod.json` records when each page's content last changed (used for `<lastmod>` in the sitemap). Commit it with every build.
+
 ## Settings in build.py
 
 - `WHATSAPP` — WhatsApp number 066 210 5631 (confirmed by MF Banda 20/11/2026). Set to "" to hide WhatsApp buttons.
+- `SOCIAL` — social media profile URLs; each filled one shows as a footer icon and in the business details for Google.
+- `OPENING_HOURS` — e.g. `["Mo-Fr 08:00-17:00"]` once confirmed.
+- `GA_ID` — Google Analytics 4 measurement ID. When set, a cookie-consent bar appears and analytics load only after Accept; enquiries (`generate_lead`), call, WhatsApp and email clicks are tracked as events.
+- `GSC_VERIFY` — Google Search Console HTML-tag verification code.
 - Contact details, practitioner number and address are constants at the top of the file.
+
+The build stops with an error if any page title is over 60 characters or a description over 160.
 
 ## Contact form
 
-`contact.php` emails enquiries to accounts@thinkmybiz.co.za (From and To: accounts@thinkmybiz.co.za, an existing mailbox; Reply-To: the enquirer). Nothing is stored on the server. If the PHP handler is unreachable, the form falls back to opening the visitor's email app.
+`contact.php` emails enquiries, then sends the enquirer a one-off acknowledgement (set `$ACK_ENABLED = false` to stop it). It emails enquiries to accounts@thinkmybiz.co.za (From and To: accounts@thinkmybiz.co.za, an existing mailbox; Reply-To: the enquirer). Nothing is stored on the server. If the PHP handler is unreachable, the form falls back to opening the visitor's email app.
 
 ## Content source
 

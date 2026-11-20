@@ -47,6 +47,13 @@ if ($ts > 0 && (round(microtime(true) * 1000) - $ts) < 2000) out(422, ['ok' => f
 
 // Single-line header values only.
 $name1 = preg_replace('/[\n]+/', ' ', $name);
+$SERVICE_LABELS = [
+  'individual-tax' => 'Individual & provisional tax', 'business-tax' => 'Business & trust tax', 'vat' => 'VAT services',
+  'payroll' => 'Payroll & employer taxes', 'sars-disputes' => 'SARS disputes & resolution', 'tax-debt' => 'Tax debt & compliance recovery',
+  'tax-planning' => 'Tax planning & specialist support', 'accounting' => 'Accounting & financial statements',
+  'business-compliance' => 'CIPC, licences & tenders', 'business-advisory' => 'Business advisory',
+];
+if (isset($SERVICE_LABELS[$service])) $service = $SERVICE_LABELS[$service];
 $serv1 = preg_replace('/[\n]+/', ' ', $service ?: 'General enquiry');
 
 $subject = 'Website enquiry: ' . $serv1 . ' — ' . $name1;
@@ -64,4 +71,25 @@ $headers = [
 $sent = @mail($TO, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, implode("\r\n", $headers), '-f' . $FROM);
 
 if (!$sent) out(500, ['ok' => false, 'error' => 'Your message could not be sent. Please email accounts@thinkmybiz.co.za or call 066 210 5631.']);
+
+// Automatic acknowledgement to the enquirer (one email; no marketing). Failure here does not affect the enquiry.
+$ACK_ENABLED = true;
+if ($ACK_ENABLED) {
+  $first = trim(explode(' ', $name1)[0]);
+  $ack = "Dear " . ($first !== '' ? $first : 'Sir/Madam') . ",\n\n"
+       . "Thank you for contacting Think Mybiz Accountants & Tax Practitioners. We have received your enquiry about \"$serv1\". We will be in touch to arrange your free consultation.\n\n"
+       . "If your matter concerns a SARS letter or assessment, please reply to this email with the date you received it and the tax type and period. "
+       . "Ask us for a secure route before sending identity numbers or sensitive documents.\n\n"
+       . "Telephone / WhatsApp: 066 210 5631\nEmail: accounts@thinkmybiz.co.za\nWebsite: https://thinkmybiz.co.za\n\n"
+       . "Kind regards\nThink Mybiz Accountants & Tax Practitioners\nMF Banda, SARS registered tax practitioner PR-0034776\n\n"
+       . "You received this one-off email because you submitted an enquiry on thinkmybiz.co.za. It is not a marketing message.\n";
+  $ackHeaders = [
+    'From: Think Mybiz Accountants <' . $FROM . '>',
+    'Reply-To: Think Mybiz Accountants <' . $TO . '>',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Auto-Submitted: auto-replied',
+    'X-Mailer: thinkmybiz.co.za',
+  ];
+  @mail($email, '=?UTF-8?B?' . base64_encode('We received your enquiry — Think Mybiz Accountants') . '?=', $ack, implode("\r\n", $ackHeaders), '-f' . $FROM);
+}
 out(200, ['ok' => true]);
