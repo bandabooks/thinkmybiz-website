@@ -1,7 +1,7 @@
 {
  "/": {
   "date": "2026-11-20",
-  "hash": "d3edd685f548b2eee8ac92310fc6f176"
+  "hash": "9255924670f7029ab7d2c654671d52d7"
  },
  "/about/": {
   "date": "2026-11-20",
@@ -53,11 +53,31 @@
  },
  "/insights/": {
   "date": "2026-11-20",
-  "hash": "e8deed3f38f2b69c995b7396b164af3b"
+  "hash": "d905550e4251c3f0ff0b1fad48d71abd"
+ },
+ "/insights/how-to-object-to-a-sars-assessment/": {
+  "date": "2026-11-20",
+  "hash": "49e3dd96d9f6d7d8df009bea579aa1a9"
+ },
+ "/insights/late-sars-objection-condonation/": {
+  "date": "2026-11-20",
+  "hash": "52077a51958e23932e02594ea5daffca"
  },
  "/insights/sars-letter-of-demand-options/": {
   "date": "2026-11-20",
-  "hash": "9909450ed2bb50d090057204cc9c4050"
+  "hash": "0ddcdd7a18a70e010795909c352d6060"
+ },
+ "/insights/sars-tax-debt-compromise/": {
+  "date": "2026-11-20",
+  "hash": "44560ab0869f944cb7e8823f5e320de7"
+ },
+ "/insights/sars-verification-letter-what-to-do/": {
+  "date": "2026-11-20",
+  "hash": "155d6a75887d3e742981a5832b2d2b81"
+ },
+ "/insights/tax-compliance-status-pin-tenders/": {
+  "date": "2026-11-20",
+  "hash": "4976a9e3ec5ec2cf17576d3fcab668e4"
  },
  "/privacy/": {
   "date": "2026-11-20",
@@ -89,7 +109,7 @@
  },
  "/services/business-tax/": {
   "date": "2026-11-20",
-  "hash": "626fb69972cfa1979cec5591600253d9"
+  "hash": "c24158a2370bbcf8d6778f086e4a407d"
  },
  "/services/digital-finance/": {
   "date": "2026-11-20",
@@ -113,11 +133,11 @@
  },
  "/services/sars-disputes/": {
   "date": "2026-11-20",
-  "hash": "baaeaa9c88dabffd7ba4e3966941d243"
+  "hash": "cbddf4fe37f7d6707f190a42634131b2"
  },
  "/services/tax-debt/": {
   "date": "2026-11-20",
-  "hash": "210db09bf4136477263fd66d44d5610a"
+  "hash": "e19efe4f288353678aa2f18ee9f2286c"
  },
  "/services/tax-planning/": {
   "date": "2026-11-20",

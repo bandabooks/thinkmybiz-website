@@ -422,7 +422,7 @@ def load_articles():
                 t, u = [x.strip() for x in line.strip()[2:].split("|", 1)]
                 sources.append((t, u))
             elif ":" in line:
-                key, val = line.split(":", 1); meta[key.strip()] = val.strip()
+                key, val = line.split(":", 1); meta[key.strip()] = val.strip().strip('"')
         meta["slug"] = os.path.splitext(os.path.basename(fp))[0]
         meta["path"] = f'/insights/{meta["slug"]}/'
         meta["sources"] = sources
