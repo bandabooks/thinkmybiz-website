@@ -1,6 +1,7 @@
 <?php
 // Think Mybiz Accountants — contact form handler (hand-edited; not generated).
 // Sends website enquiries to the practice mailbox. No data is stored on the server.
+date_default_timezone_set('Africa/Johannesburg'); // before any date() call
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 
@@ -51,7 +52,6 @@ $headers = [
   'Content-Type: text/plain; charset=UTF-8',
   'X-Mailer: thinkmybiz.co.za',
 ];
-date_default_timezone_set('Africa/Johannesburg');
 $sent = @mail($TO, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, implode("\r\n", $headers), '-f' . $FROM);
 
 if (!$sent) out(500, ['ok' => false, 'error' => 'Your message could not be sent. Please email accounts@thinkmybiz.co.za or call 066 210 5631.']);
