@@ -410,6 +410,22 @@ CITIES = [
 # Front matter: title, seo_title (<=60), description (<=160), date (YYYY-MM-DD), updated (optional),
 # service (slug of the related service page), sources (lines "- Title | URL"). Body: Markdown.
 import glob, markdown as _md
+import re as _re
+def mobile_tables(h):
+    """Wrap each article table and label every cell with its column heading, so phones can show rows as stacked cards."""
+    def one(m):
+        t = m.group(0)
+        heads = [_re.sub(r"<[^>]+>", "", x).strip() for x in _re.findall(r"<th[^>]*>(.*?)</th>", t, _re.S)]
+        def row(rm):
+            i = [0]
+            def cell(cm):
+                lab = heads[i[0]] if i[0] < len(heads) else ""
+                i[0] += 1
+                return f'<td data-label="{html.escape(lab)}"' + cm.group(1) + ">"
+            return _re.sub(r"<td([^>]*)>", cell, rm.group(0))
+        t = _re.sub(r"<tr>.*?</tr>", row, t, flags=_re.S)
+        return '<div class="table-wrap">' + t.replace("<table>", '<table class="stack">') + "</div>"
+    return _re.sub(r"<table>.*?</table>", one, h, flags=_re.S)
 def load_articles():
     arts = []
     for fp in sorted(f for f in glob.glob(os.path.join(OUT, "_src", "articles", "*.md")) if os.path.basename(f) not in ("README.md", "CALENDAR.md")):
@@ -426,7 +442,7 @@ def load_articles():
         meta["slug"] = os.path.splitext(os.path.basename(fp))[0]
         meta["path"] = f'/insights/{meta["slug"]}/'
         meta["sources"] = sources
-        meta["html"] = _md.markdown(body, extensions=["tables", "sane_lists"])
+        meta["html"] = mobile_tables(_md.markdown(body, extensions=["tables", "sane_lists"]))
         meta["words"] = len(body.split())
         assert meta.get("service") in SVC, f'{fp}: unknown service {meta.get("service")}'
         assert sources, f"{fp}: an article must list its official sources"
@@ -816,7 +832,7 @@ wa_item = (f'<div class="contact-item">{icon("phone")}<div><small>WhatsApp</smal
 contact = hero("Contact", "Book a free consultation",
   "Tell us what you need, or send us the SARS or compliance notice you have received. We will assess the work and reply with an agreed scope.",
   [("Home", "/"), ("Contact", None)], actions=False) + f"""
-<section class="section"><div class="container grid g2" style="gap:40px;align-items:start;grid-template-columns:1.25fr 1fr">
+<section class="section"><div class="container grid contact-grid">
 <div class="card"><form id="enquiry" class="form" action="/contact.php" method="post" novalidate>
 <div class="two"><div><label for="f-name">Full name *</label><input id="f-name" name="name" required autocomplete="name"></div>
 <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div></div>

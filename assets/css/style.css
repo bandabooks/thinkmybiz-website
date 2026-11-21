@@ -19,7 +19,7 @@ h2{font-size:clamp(1.55rem,3vw,2.2rem);font-weight:800}
 h3{font-size:1.1rem;font-weight:700}
 p+p{margin-top:.8em}
 .container{max-width:var(--max);margin:0 auto;padding:0 22px}
-.eyebrow{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--green)}
+.eyebrow{display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--green)}
 .eyebrow.light{color:var(--green-light)}
 .lead{font-size:1.1rem;max-width:740px}
 .section{padding:80px 0}
@@ -224,10 +224,22 @@ a.card:hover{border-color:var(--green);transform:translateY(-2px)}
 .consent-bar div{display:flex;gap:8px;flex:none}
 @media (max-width:640px){.consent-bar{flex-direction:column;align-items:stretch;bottom:60px}.consent-bar div{justify-content:flex-end}}
 
+/* Mobile-friendliness helpers */
+.contact-grid{grid-template-columns:1.25fr 1fr;gap:40px;align-items:start}
+.two-col>*,.grid>*{min-width:0}
+.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1em 0}
+.table-wrap table{margin:0}
+.contact-item a,.contact-item span,.site-footer li,.topbar a{overflow-wrap:anywhere}
+.contact-item a{display:inline-block;padding:6px 0}
+.footer-bottom a{display:inline-block;padding:8px 4px}
+.site-footer li a{display:inline-block;padding:3px 0}
+img,svg{max-width:100%}
+
 /* Sticky mobile call bar */
 .mbar{display:none}
 
 @media (max-width:980px){
+  .contact-grid{grid-template-columns:1fr}
   .hero-grid,.two-col,.band{grid-template-columns:1fr}
   .aside{position:static}
   .g4,.g5{grid-template-columns:repeat(2,1fr)}
@@ -236,13 +248,34 @@ a.card:hover{border-color:var(--green);transform:translateY(-2px)}
   .menu-toggle{display:block}
   .nav-links{display:none;position:absolute;top:76px;left:0;right:0;background:#fff;flex-direction:column;align-items:stretch;padding:12px 16px 18px;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
   .nav-links.open{display:flex}
-  .nav-links a{padding:12px}
+  .nav-links a{display:block;padding:14px 12px;font-size:1rem;border-bottom:1px solid var(--line);border-radius:0}
+  .nav-links li:nth-last-child(2) a{border-bottom:0}
   .nav-cta{margin:8px 0 0}
   .nav-cta a{text-align:center;display:block}
   .topbar .tb-r{display:none}
 }
 @media (max-width:640px){
   body{font-size:15.5px}
+  .contact-grid{grid-template-columns:1fr;gap:24px}
+  .eyebrow{font-size:.8rem;letter-spacing:.14em}
+  .site-footer li a{padding:6px 0}
+  .article p,.article li{font-size:1rem;line-height:1.7}
+  .article h2{font-size:1.25rem}
+  .hero h1,.page-hero h1{font-size:1.85rem}
+  .two-col{gap:28px}
+  .card{padding:20px}
+  .btn{padding:12px 18px}
+  .share a,.share button{padding:9px 14px}
+  .faq summary{padding:4px 0}
+  /* article tables: each row becomes a stacked card */
+  .article table.stack,.article table.stack tbody,.article table.stack tr,.article table.stack td{display:block;width:100%}
+  .article table.stack thead{display:none}
+  .article table.stack tr{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;background:#fff}
+  .article table.stack td{border:0;border-bottom:1px solid var(--line);padding:9px 12px}
+  .article table.stack td:last-child{border-bottom:0}
+  .article table.stack td::before{content:attr(data-label);display:block;font-size:.76rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--green);margin-bottom:2px}
+  .article table.stack td:first-child{background:var(--bg);font-weight:700;color:var(--navy-900)}
+  .rows .row .k{font-size:.9rem}
   .section{padding:58px 0}
   .hero{padding:60px 0 64px}
   .g2,.g3,.g4,.g5,.form .two{grid-template-columns:1fr}
