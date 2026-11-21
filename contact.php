@@ -10,6 +10,46 @@ $FROM = 'accounts@thinkmybiz.co.za'; // must be an existing mailbox: Hostinger d
 
 function out($code, $arr) { http_response_code($code); echo json_encode($arr); exit; }
 
+// Authenticated SMTP for accounts@ (better inbox delivery than PHP mail()).
+// Credentials live OUTSIDE the web root and outside Git, in the folder above public_html:
+//   .tmb-smtp.php  ->  <?php return ['host'=>'smtp.hostinger.com','port'=>465,'user'=>'accounts@thinkmybiz.co.za','pass'=>'...'];
+// If that file is absent, mail() is used exactly as before. An SMTP failure is logged and mail() is tried once.
+$SMTP_FILE = dirname(__DIR__) . '/.tmb-smtp.php';
+$SMTP = is_readable($SMTP_FILE) ? (include $SMTP_FILE) : null;
+if (!is_array($SMTP) || empty($SMTP['host']) || empty($SMTP['user']) || !isset($SMTP['pass'])) $SMTP = null;
+
+function smtp_send(array $c, string $to, string $subjectEnc, string $body, array $headers): bool {
+  $ssl = ['verify_peer' => true, 'verify_peer_name' => true, 'peer_name' => $c['host']];
+  if (!empty($c['cafile'])) $ssl['cafile'] = $c['cafile'];
+  $fp = @stream_socket_client('ssl://' . $c['host'] . ':' . (int)($c['port'] ?? 465), $en, $es, 15,
+                              STREAM_CLIENT_CONNECT, stream_context_create(['ssl' => $ssl]));
+  if (!$fp) { error_log("contact.php SMTP connect failed: $es"); return false; }
+  stream_set_timeout($fp, 15);
+  $step = function ($line, array $ok) use ($fp) {
+    if ($line !== null) fwrite($fp, $line . "\r\n");
+    $resp = '';
+    while (($l = fgets($fp, 1024)) !== false) { $resp .= $l; if (strlen($l) < 4 || $l[3] !== '-') break; }
+    if (!in_array((int)substr($resp, 0, 3), $ok, true)) { error_log('contact.php SMTP: ' . trim($resp)); return false; }
+    return true;
+  };
+  $msg = implode("\r\n", array_merge([
+      'Date: ' . date('r'), 'To: <' . $to . '>', 'Subject: ' . $subjectEnc,
+      'Message-ID: <' . bin2hex(random_bytes(12)) . '@thinkmybiz.co.za>', 'MIME-Version: 1.0',
+      'Content-Transfer-Encoding: base64'], $headers)) . "\r\n\r\n" . rtrim(chunk_split(base64_encode($body), 76, "\r\n"));
+  $ok = $step(null, [220]) && $step('EHLO thinkmybiz.co.za', [250]) && $step('AUTH LOGIN', [334])
+     && $step(base64_encode($c['user']), [334]) && $step(base64_encode($c['pass']), [235])
+     && $step('MAIL FROM:<' . $c['user'] . '>', [250]) && $step('RCPT TO:<' . $to . '>', [250, 251])
+     && $step('DATA', [354]) && $step($msg . "\r\n.", [250]);
+  @fwrite($fp, "QUIT\r\n"); fclose($fp);
+  return $ok;
+}
+
+function send_mail(string $to, string $subjectEnc, string $body, array $headers, string $from): bool {
+  global $SMTP;
+  if ($SMTP && smtp_send($SMTP, $to, $subjectEnc, $body, $headers)) return true;
+  return @mail($to, $subjectEnc, $body, implode("\r\n", $headers), '-f' . $from);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') out(405, ['ok' => false, 'error' => 'Method not allowed.']);
 
 
@@ -69,7 +109,7 @@ $headers = [
   'Content-Type: text/plain; charset=UTF-8',
   'X-Mailer: thinkmybiz.co.za',
 ];
-$sent = @mail($TO, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, implode("\r\n", $headers), '-f' . $FROM);
+$sent = send_mail($TO, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers, $FROM);
 
 if (!$sent) out(500, ['ok' => false, 'error' => 'Your message could not be sent. Please email accounts@thinkmybiz.co.za or call 066 210 5631.']);
 
@@ -91,6 +131,6 @@ if ($ACK_ENABLED) {
     'Auto-Submitted: auto-replied',
     'X-Mailer: thinkmybiz.co.za',
   ];
-  @mail($email, '=?UTF-8?B?' . base64_encode('We received your enquiry — Think Mybiz Accountants') . '?=', $ack, implode("\r\n", $ackHeaders), '-f' . $FROM);
+  send_mail($email, '=?UTF-8?B?' . base64_encode('We received your enquiry — Think Mybiz Accountants') . '?=', $ack, $ackHeaders, $FROM);
 }
 out(200, ['ok' => true]);

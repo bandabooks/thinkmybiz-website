@@ -794,21 +794,22 @@ how = hero("How we work", "Working with us",
   "Start with your current needs, your latest SARS or compliance notices and a clear view of what is outstanding. We will assess the work and provide an agreed scope.",
   [("Home", "/"), ("How we work", None)]) + f"""
 <section class="section"><div class="container"><div class="grid g5">{"".join(f'<div class="card step"><span class="num">{i:02d}</span><h3>{a}</h3><p>{b}</p></div>' for i,(a,b) in enumerate([
- ("Understand the position","Initial consultation, taxpayer and entity checks, review of registrations and identification of urgent dates."),
- ("Agree the engagement","Written scope, deliverables, fees, responsibilities, authorisations and expected timing."),
- ("Collect the evidence","Identity and entity records, tax notices, accounting documents and any outstanding information."),
- ("Prepare and review","Reconcile the records, prepare the work, resolve queries and obtain the required client approval."),
- ("Submit and follow through","Submit within the mandate, retain acknowledgements, communicate outcomes and identify further action.")],1))}</div></div></section>
+ ("Understand your needs","Free consultation, taxpayer and entity checks, review of registrations, records available and any urgent dates."),
+ ("Receive a quotation","A written quotation setting out the scope, deliverables, fee, deposit and how long the quotation remains valid."),
+ ("Engagement and deposit","You accept the engagement letter and pay a 50% deposit. Work begins once the deposit has been received."),
+ ("Prepare and review","We collect the evidence, reconcile the records and prepare the work. The practitioner reviews it and obtains your approval."),
+ ("Settle and deliver","The balance is invoiced on completion. Final statements and reports are released, and returns submitted, once paid in full.")],1))}</div></div></section>
 <section class="section alt"><div class="container grid g2" style="gap:40px">
 <div><span class="eyebrow">Ways to engage us</span><h2 style="margin:.35em 0 .6em">Retainer, once-off or dispute matter</h2>
-<p>Services are available through monthly retainers, once-off assignments or separate dispute and recovery engagements. The quotation identifies deliverables, exclusions, responsibilities and fees; external approval and third-party charges are addressed separately.</p></div>
+<p>Services are available through monthly retainers, once-off assignments or separate dispute and recovery engagements. The quotation identifies deliverables, exclusions, responsibilities and fees; external approval and third-party charges are addressed separately.</p>
+<p><strong>Fees and payment.</strong> Once-off work starts after a 50% deposit, and the balance is payable on completion before final delivery. Monthly retainers are payable in advance for each month. Where a SARS or CIPC deadline applies, we confirm in writing the date by which payment is needed to meet it.</p></div>
 <div><span class="eyebrow">Confidentiality and client responsibilities</span><h2 style="margin:.35em 0 .6em">Working together properly</h2>
 <p>We handle personal and financial information with regard to POPIA and professional confidentiality. Clients provide complete and accurate records, approve submissions as agreed and make payments by the required dates. Access and authority are arranged through the applicable taxpayer and practitioner processes.</p></div></div></section>
 <section class="section"><div class="container"><div class="band"><div><span class="eyebrow light">Remote by design</span><h2 style="margin:.35em 0 .45em">No office visit needed</h2>
 <p>Documents are sent electronically and filed in a dedicated client folder per financial year. Work is prepared on Taxnify and reviewed by the practitioner before anything is submitted, and only with your approval. See our <a href="/services/" style="color:#7fe0a0">services</a> or <a href="/service-areas/" style="color:#7fe0a0">service areas</a>.</p></div>
 <div><a class="btn btn-primary" href="/contact/">Book a free consultation</a></div></div></div></section>{cta()}"""
 page("/how-we-work/", "How We Work: Remote Accounting &amp; Tax | Think Mybiz",
-     "Free consultation, written scope and fees, secure online documents, practitioner review and submission only with your approval, anywhere in SA.",
+     "Free consultation, written quotation, 50% deposit to start, practitioner review and delivery on final payment. Remote accounting and tax across SA.",
      how, "/how-we-work/", [crumbs_schema([("Home", "/"), ("How we work", "/how-we-work/")])])
 
 # ------------------------------------------------------------------ SERVICE AREAS
