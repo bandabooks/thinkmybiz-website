@@ -14,6 +14,7 @@
     if (h.indexOf("tel:") === 0) track("click_call", { link_url: h, page_path: location.pathname });
     else if (h.indexOf("wa.me/") > -1 && !a.hasAttribute("data-track")) track("click_whatsapp", { page_path: location.pathname });
     else if (h.indexOf("mailto:") === 0) track("click_email", { page_path: location.pathname });
+    else if (a.classList.contains("quote")) track("click_quote", { link_url: h, page_path: location.pathname });
     else if (a.hasAttribute("data-track")) track(a.getAttribute("data-track"), { page_path: location.pathname });
     if (a.hasAttribute("data-copy")) {
       var u = a.getAttribute("data-copy");

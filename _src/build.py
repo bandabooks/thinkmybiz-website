@@ -635,7 +635,9 @@ EXTRA = ('<a class="card" href="/sars-letter/" style="background:var(--green-50)
 def svc_cards(items=SERVICES, extra=False):
     return svc_cards_(items) + (EXTRA.replace("{i}", icon("alert")) if extra else "")
 def svc_cards_(items):
-    return "".join(f'<a class="card" href="/services/{s["slug"]}/">{icon(s["icon"])}<h3>{s["short"]}</h3><p>{s["card"]}</p><span class="more">Learn more →</span></a>' for s in items)
+    return "".join(f'<div class="card svc-card">{icon(s["icon"])}<h3><a href="/services/{s["slug"]}/">{s["short"]}</a></h3><p>{s["card"]}</p>'
+                   f'<div class="card-actions"><a class="more" href="/services/{s["slug"]}/" aria-label="Learn more about {s["short"]}">Learn more →</a>'
+                   f'<a class="quote" href="/contact/?service={s["slug"]}" aria-label="Request a quote for {s["short"]}">Request a quote →</a></div></div>' for s in items)
 
 def faq_html(faq):
     return '<div class="faq">' + "".join(f"<details><summary>{q}</summary><p>{a}</p></details>" for q, a in faq) + "</div>"

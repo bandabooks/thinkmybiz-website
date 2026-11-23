@@ -1,27 +1,27 @@
 {
  "/": {
-  "date": "2026-11-20",
-  "hash": "f846daf5c79f4ad7c157433ed7b28acb"
+  "date": "2026-11-23",
+  "hash": "7873d0c9f9e2a61612202b294e427dd9"
  },
  "/about/": {
   "date": "2026-11-20",
   "hash": "cc611332ce50f2ba9b099f3deb062a7c"
  },
  "/accountants-johannesburg-midrand/": {
-  "date": "2026-11-20",
-  "hash": "88e6e1779aff25df4cdb785b0cbcb999"
+  "date": "2026-11-23",
+  "hash": "5ae2fd8d61b9ff89c00ca2f6aa98b219"
  },
  "/accountants-mokopane/": {
-  "date": "2026-11-20",
-  "hash": "1d38acbec011ec54803613d984f59347"
+  "date": "2026-11-23",
+  "hash": "db6e0c6a206745b461068ae59c62a3ea"
  },
  "/accountants-polokwane/": {
-  "date": "2026-11-20",
-  "hash": "3caa5721df438e9501e3745c6efb4b4e"
+  "date": "2026-11-23",
+  "hash": "788a1aee968c867a922384e597d928b6"
  },
  "/accountants-pretoria/": {
-  "date": "2026-11-20",
-  "hash": "d8f62f35ffa8b1fd009a7def07600d06"
+  "date": "2026-11-23",
+  "hash": "4b8cbec964527439226bf90e40dd311c"
  },
  "/contact/": {
   "date": "2026-11-21",
@@ -36,20 +36,20 @@
   "hash": "75d38ca0cd380c51b0b3d9770965395d"
  },
  "/industries/construction/": {
-  "date": "2026-11-20",
-  "hash": "cfa3ada589fca81ac1c79d0c374be167"
+  "date": "2026-11-23",
+  "hash": "e8a71535b6120f9ab1281c40f0cafd58"
  },
  "/industries/nonprofits/": {
-  "date": "2026-11-20",
-  "hash": "0240f09e8b892cee292a48db48f098bb"
+  "date": "2026-11-23",
+  "hash": "28d77e4123a7fe168e3b5b78530b4f23"
  },
  "/industries/security/": {
-  "date": "2026-11-20",
-  "hash": "059b5e68fefa6fd7f861e2bd99a76bc2"
+  "date": "2026-11-23",
+  "hash": "a278216a2261e3857fc0dced1cd2086d"
  },
  "/industries/transport-logistics/": {
-  "date": "2026-11-20",
-  "hash": "e04e7b26a15d571edeb2f801e0b3a3b8"
+  "date": "2026-11-23",
+  "hash": "bea26823d1d9ef9cb249890125a72af3"
  },
  "/insights/": {
   "date": "2026-11-20",
@@ -100,12 +100,12 @@
   "hash": "7d2a9d9062f4c890d8aefc20700830a3"
  },
  "/service-areas/": {
-  "date": "2026-11-20",
-  "hash": "8aa8c044c9b9e4ad7d8cf9083a1d89e0"
+  "date": "2026-11-23",
+  "hash": "07ec5f319c4818f26e5f20aa91f80a6c"
  },
  "/services/": {
-  "date": "2026-11-20",
-  "hash": "e1680e9a08f9d9c9b803214b499851eb"
+  "date": "2026-11-23",
+  "hash": "3eba4a80249a8731925142bda8608858"
  },
  "/services/accounting/": {
   "date": "2026-11-21",
