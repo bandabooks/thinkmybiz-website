@@ -15,6 +15,10 @@ EMAIL = "accounts@thinkmybiz.co.za"
 PHONE, TEL = "066 210 5631", "+27662105631"
 MOBILE, MTEL = "072 104 1051", "+27721041051"
 ADDRESS = "No 48 Rabe Street, Havenga Building, Mokopane, Limpopo, 0600"
+# Midrand service points: consultations by appointment only. The practice is remote-first.
+MIDRAND = [dict(name="Mushroom Farm Shopping Centre", street="Mushroom Farm Shopping Centre, 2 President Drive", locality="Plooysville AH, Midrand", postal="1686"),
+           dict(name="Halfway House", street="675 Old Pretoria Road", locality="Halfway House, Midrand", postal="1685")]
+def mid_addr(m): return f'{m["street"]}, {m["locality"]}, {m["postal"]}'
 PR = "PR-0034776"
 # WhatsApp number (confirmed by MF Banda 20/11/2026: 066 210 5631). Empty = no WhatsApp buttons.
 WHATSAPP, WA_DISPLAY = "27662105631", "066 210 5631"
@@ -28,6 +32,9 @@ OPENING_HOURS = []
 GA_ID = ""
 # Google Search Console HTML-tag verification code (the content="..." value). Empty = no tag.
 GSC_VERIFY = ""
+# Advertising tags, loaded only after the visitor accepts cookies. Meta Pixel ID (digits) and LinkedIn Insight partner ID.
+META_PIXEL = ""
+LINKEDIN_PARTNER = ""
 # IndexNow key (Bing, Yandex and others): the key file is published at /<key>.txt so new pages can be submitted instantly.
 INDEXNOW_KEY = "1b3bcb6effaa658108b8dde33d57d2f6"
 
@@ -391,7 +398,7 @@ CITIES = [
   lead="Remote accounting, tax and SARS compliance for businesses and individuals in Johannesburg, Sandton, Midrand and the East and West Rand.",
   areas="Johannesburg CBD, Sandton, Randburg, Roodepoort, Midrand, Soweto, Alexandra, Kempton Park, Germiston, Benoni, Boksburg, Alberton and Krugersdorp",
   focus=["accounting", "vat", "payroll"],
-  body="Johannesburg and Midrand businesses typically use us for monthly bookkeeping, VAT and payroll, so that the books, VAT201s and EMP201s stay reconciled every month and year-end work is quick. Individuals use us for ITR12 returns, rental income and SARS queries."),
+  body="Johannesburg and Midrand businesses typically use us for monthly bookkeeping, VAT and payroll, so that the books, VAT201s and EMP201s stay reconciled every month and year-end work is quick. Individuals use us for ITR12 returns, rental income and SARS queries. Most clients never need to visit, but in-person consultations are available by appointment in Midrand."),
  dict(path="/accountants-polokwane/", short="Polokwane", city="Polokwane", province="Limpopo",
   title="Accountants &amp; Tax Practitioners in Polokwane | Think Mybiz",
   desc="Accounting, tax returns, VAT, payroll, CIPC, CSD and SARS help for Polokwane, Seshego and Mankweng clients, from a Limpopo-based tax practitioner.",
@@ -539,7 +546,7 @@ def footer():
 <p style="margin-top:10px">SARS registered tax practitioner {PR}</p>{social_links()}</div>
 <div><h4>Tax services</h4><ul>{svc}</ul></div>
 <div><h4>Business services</h4><ul>{svc2}<li><a href="/sars-letter/">Received a SARS letter?</a></li><li><a href="/industries/">Industries we serve</a></li></ul></div>
-<div><h4>Contact</h4><ul><li><a href="tel:{TEL}">{PHONE}</a></li>{wa}<li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li>{ADDRESS}</li><li><a href="/service-areas/">Serving all nine provinces</a></li>{"".join(f'<li><a href="{c["path"]}">{c["short"]}</a></li>' for c in CITIES)}</ul></div>
+<div><h4>Contact</h4><ul><li><a href="tel:{TEL}">{PHONE}</a></li>{wa}<li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><small class="f-lbl">Head office</small>{ADDRESS}</li><li><small class="f-lbl">Midrand, by appointment</small>{"<br>".join(mid_addr(m) for m in MIDRAND)}</li><li><a href="/service-areas/">Remote service in all nine provinces</a></li>{"".join(f'<li><a href="{c["path"]}">{c["short"]}</a></li>' for c in CITIES)}</ul></div>
 </div>
 <div class="footer-bottom"><span>© <span id="year">2026</span> {BRAND}. {E(LEGAL)}, reg. no. 2021/819201/07.</span>
 <span><a href="/privacy/">Privacy &amp; POPIA</a> · <a href="/contact/">Contact</a></span></div></div></footer>
@@ -553,6 +560,9 @@ ORG = {
  "address": {"@type": "PostalAddress", "streetAddress": "No 48 Rabe Street, Havenga Building", "addressLocality": "Mokopane",
              "addressRegion": "Limpopo", "postalCode": "0600", "addressCountry": "ZA"},
  "areaServed": {"@type": "Country", "name": "South Africa"},
+ "department": [{"@type": "AccountingService", "name": f"{BRAND_TXT} (Midrand, by appointment)", "url": DOMAIN + "/accountants-johannesburg-midrand/",
+   "telephone": TEL, "email": EMAIL, "address": {"@type": "PostalAddress", "streetAddress": m["street"], "addressLocality": m["locality"],
+   "addressRegion": "Gauteng", "postalCode": m["postal"], "addressCountry": "ZA"}} for m in MIDRAND],
  "founder": {"@id": DOMAIN + "/about/#mf-banda"}, "foundingDate": "2021-08-18", "vatID": "4010320630",
  "slogan": "Accountable. Reliable. Compliant. Focused on your growth.",
  "priceRange": "Quoted per engagement",
@@ -575,15 +585,16 @@ PERSON = {"@context": "https://schema.org", "@type": "Person", "@id": DOMAIN + "
   "knowsAbout": ["South African income tax", "VAT", "SARS dispute resolution", "Tax debt", "Payroll taxes"]}
 
 def analytics_head():
-    if not GA_ID: return ""
-    return (f'<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}'
+    tags = f'<script>window.TMB_TAGS={json.dumps({"meta": META_PIXEL, "li": LINKEDIN_PARTNER})}</script>' if (META_PIXEL or LINKEDIN_PARTNER) else ""
+    if not GA_ID: return tags
+    return tags + (f'<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}'
             f'gtag("consent","default",{{analytics_storage:"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied"}});'
             f'try{{if(localStorage.getItem("tmb_consent")==="yes")gtag("consent","update",{{analytics_storage:"granted"}})}}catch(e){{}}'
             f'gtag("js",new Date());gtag("config","{GA_ID}");</script>'
             f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>')
 def consent_banner():
-    if not GA_ID: return ""
-    return ('<div class="consent-bar" hidden><p>We use Google Analytics cookies to understand how visitors use this site, only if you agree. '
+    if not (GA_ID or META_PIXEL or LINKEDIN_PARTNER): return ""
+    return ('<div class="consent-bar" hidden><p>With your permission we use analytics and advertising cookies (Google, Meta, LinkedIn) to measure our marketing. '
             '<a href="/privacy/">Privacy notice</a></p><div><button class="btn btn-sm btn-outline" data-consent="no">Decline</button>'
             '<button class="btn btn-sm btn-primary" data-consent="yes">Accept</button></div></div>')
 
@@ -652,7 +663,7 @@ TRUST = "".join(f'<span class="pill">{t}</span>' for t in [f"SARS registered tax
 
 # ------------------------------------------------------------------ HOME
 GEN_FAQ = [
- ("Do you only work with clients in Limpopo?", "No. Our head office is in Mokopane, Limpopo, but we serve individuals and businesses in all nine provinces, including Johannesburg, Pretoria and Midrand, through remote service. Office consultations are available by arrangement."),
+ ("Do you only work with clients in Limpopo?", "No. Our head office is in Mokopane, Limpopo, but we serve individuals and businesses in all nine provinces, including Johannesburg, Pretoria and Midrand, through remote service. In-person consultations are available by appointment at our Mokopane head office and in Midrand."),
  ("How do I send you my documents?", "Electronically. We agree a secure route for sensitive documents, file them in a dedicated client folder per financial year, and meet by phone or video call."),
  ("How much do your services cost?", "Fees depend on the work. After a free consultation we send a written quotation that identifies the deliverables, exclusions, responsibilities and fees before any work starts."),
  ("Who will do my work?", "Work is prepared and reviewed under MF Banda, director and SARS registered tax practitioner (PR-0034776). Nothing is submitted without your approval."),
@@ -700,7 +711,7 @@ home = f"""<section class="hero"><div class="container hero-grid"><div>
 
 <section class="section"><div class="container"><div class="grid g2" style="gap:48px;align-items:start">
 <div><span class="eyebrow">Anywhere in South Africa</span><h2 style="margin:.35em 0 .5em">Remote service in all nine provinces</h2>
-<p>Based in Mokopane, Limpopo, we work with clients throughout South Africa, including Johannesburg, Pretoria and Midrand. Documents are sent electronically, meetings happen by phone or video call, and office consultations are available by arrangement.</p>
+<p>Based in Mokopane, Limpopo, we work with clients throughout South Africa, including Johannesburg, Pretoria and Midrand. Documents are sent electronically, meetings happen by phone or video call, and in-person consultations are available by appointment in Mokopane and Midrand.</p>
 <div class="chips" style="margin-top:18px">{"".join(f'<span class="chip">{a}</span>' for a,_ in AREAS)}</div>
 <a class="btn btn-outline" href="/service-areas/" style="margin-top:20px">Service areas</a></div>
 <div><span class="eyebrow">Common questions</span><h2 style="margin:.35em 0 .6em">Frequently asked</h2>{faq_html(GEN_FAQ)}</div></div></div></section>
@@ -818,7 +829,7 @@ page("/how-we-work/", "How We Work: Remote Accounting &amp; Tax | Think Mybiz",
 
 # ------------------------------------------------------------------ SERVICE AREAS
 areas = hero("Service areas", "Accountants and tax practitioners serving all of South Africa",
-  "Based in Mokopane, Limpopo, with remote services available in all nine provinces. Documents are sent electronically, meetings happen by phone or video call, and office consultations are available by arrangement.",
+  "Based in Mokopane, Limpopo, with remote services available in all nine provinces. Documents are sent electronically, meetings happen by phone or video call, and in-person consultations are available by appointment in Mokopane and Midrand.",
   [("Home", "/"), ("Service areas", None)]) + f"""
 <section class="section"><div class="container"><div class="section-head"><span class="eyebrow">City pages</span><h2>Where many of our clients are</h2></div>
 <div class="grid g4" style="margin-bottom:34px">{"".join(f'<a class="card" href="{c["path"]}">{icon("pin")}<h3>{c["short"]}</h3><p>{c["province"]}</p><span class="more">View →</span></a>' for c in CITIES)}</div>
@@ -857,8 +868,9 @@ contact = hero("Contact", "Book a free consultation",
 <div class="contact-item">{icon("phone")}<div><small>Telephone</small><a href="tel:{TEL}">{PHONE}</a></div></div>
 {wa_item}
 <div class="contact-item">{icon("mail")}<div><small>Email</small><a href="mailto:{EMAIL}">{EMAIL}</a></div></div>
-<div class="contact-item">{icon("pin")}<div><small>Office</small><span>{ADDRESS}</span></div></div>
-<div class="contact-item">{icon("globe")}<div><small>Service area</small><span>All nine provinces through remote service; office consultations by arrangement.</span></div></div>
+<div class="contact-item">{icon("globe")}<div><small>How we work</small><span>Remote-first: all nine provinces by phone, WhatsApp, email and video call. No office visit needed.</span></div></div>
+<div class="contact-item">{icon("pin")}<div><small>Head office</small><span>{ADDRESS}</span></div></div>
+<div class="contact-item">{icon("pin")}<div><small>Midrand (by appointment only)</small><span>{"<br>".join(mid_addr(m) for m in MIDRAND)}</span></div></div>
 </div>
 {note("Urgent SARS matter?", "Send the full notice, assessment date, relevant tax type and period, and any existing case reference. Request a secure route before sending sensitive supporting documents.")}
 </div></div></section>"""
@@ -870,13 +882,13 @@ page("/contact/", "Contact Think Mybiz | Free Tax Consultation",
 priv = hero("Privacy", "Privacy &amp; POPIA notice", "How this website handles personal information.", [("Home", "/"), ("Privacy", None)], actions=False) + f"""
 <section class="section"><div class="container content" style="max-width:820px">
 <p>{BRAND} ({E(LEGAL)}) respects your privacy and processes personal information in line with the Protection of Personal Information Act, 2013 (POPIA).</p>
-<h2>What we collect through this website</h2><p>When you send an enquiry, we receive the details you choose to give us: your name, email address, phone number, province and town, the service you are interested in and your message. The enquiry is sent by email to {EMAIL}; the website does not store it in a database.</p>
+<h2>What we collect through this website</h2><p>When you send an enquiry, we receive the details you choose to give us: your name, email address, phone number, province and town, the service you are interested in and your message. The enquiry is emailed to {EMAIL} and recorded, with a reference number, in our private enquiry register so that we can follow it up. The register is kept on our hosting server outside the public website, is password-protected and is used only by the practice.</p><h2>How long we keep it</h2><p>Enquiries are kept only as long as needed to respond and follow up, and the register is reviewed at least every 24 months to remove enquiries that did not become engagements. You can ask us to delete your enquiry at any time. Client records are kept for the periods required by tax and company law.</p>
 <h2>How we use it</h2><p>We use your information only to respond to your enquiry, prepare a quotation and, if you engage us, deliver the agreed services and meet our legal and professional obligations. We do not sell your personal information.</p>
 <h2>Sensitive information</h2><p>Please do not send identity numbers, tax reference numbers or supporting documents through the website form. Ask us for a secure route for sensitive documents.</p>
 <h2>Client information</h2><p>Client information is handled with professional confidentiality. Access and authority to act with SARS and other authorities are arranged through the applicable taxpayer and practitioner processes.</p>
 <h2>Your rights</h2><p>You may ask what personal information we hold about you, ask us to correct or delete it, or object to its processing, subject to our legal record-keeping obligations. Contact us at <a href="mailto:{EMAIL}">{EMAIL}</a>. You may also lodge a complaint with the Information Regulator of South Africa.</p>
 <h2>Acknowledgement email</h2><p>When you send an enquiry, we send one automatic email to the address you gave, confirming that we received it.</p>
-<h2>Cookies and analytics</h2>{('<p>With your consent, this website uses Google Analytics to count visits and enquiries (for example, which pages lead to an enquiry). Analytics cookies are only set if you click Accept on the cookie notice; you can withdraw consent by clearing this site&#39;s data in your browser. We do not use advertising cookies.</p>' if GA_ID else '<p>This website does not use advertising or tracking cookies.</p>')}<p>Fonts are loaded from Google Fonts.</p>
+<h2>SARS deadline alerts</h2><p>If you subscribe, we keep your email address to send the alerts. We add you only after you click the confirmation link we email you, and every alert has an unsubscribe link.</p><h2>Drafting assistance</h2><p>We may use artificial-intelligence services (such as Anthropic or OpenAI) to help draft replies and marketing text. We do not send your email address, phone number or identity details to these services, and every message is reviewed by the practitioner before it is sent.</p><h2>Visit statistics without cookies</h2><p>We count page visits on our own server to see which pages are useful and where visitors come from (for example a search engine or a social media post). This uses no cookies, stores no IP address and cannot identify you; a visitor code that changes every day is used only to count unique visits. If your browser sends a Do Not Track or Global Privacy Control signal, no visit is recorded.</p><h2>Cookies and analytics</h2>{('<p>With your consent, this website uses Google Analytics, and where enabled the Meta Pixel and LinkedIn Insight Tag, to measure visits and the results of our advertising. These cookies are only set if you click Accept on the cookie notice; you can withdraw consent by clearing this site&#39;s data in your browser.</p>' if (GA_ID or META_PIXEL or LINKEDIN_PARTNER) else '<p>This website does not use advertising or tracking cookies.</p>')}<p>Fonts are loaded from Google Fonts.</p>
 </div></section>"""
 page("/privacy/", "Privacy &amp; POPIA Notice | Think Mybiz", "How Think Mybiz Accountants and Tax Practitioners handles personal information submitted through this website, in line with POPIA.", priv, "")
 
@@ -907,6 +919,7 @@ page("/industries/", "Industries We Serve | Think Mybiz Accountants",
      indhub, "/services/", [crumbs_schema([("Home", "/"), ("Industries", "/industries/")])])
 
 # ------------------------------------------------------------------ CITY PAGES
+mid_block = "<h2>Midrand consultation points (by appointment)</h2><p>Remote service is the default. Where a face-to-face meeting helps, we meet by appointment at:</p><ul>" + "".join(f"<li>{mid_addr(m)}</li>" for m in MIDRAND) + "</ul><p>Please <a href=\"/contact/\">book first</a>; these are not walk-in offices.</p>"
 for c in CITIES:
     towns_line = c["areas"]
     body = hero(f'{c["province"]} · {c["city"]}', f'Accountants and tax practitioners for {c["city"]}', c["lead"],
@@ -914,7 +927,7 @@ for c in CITIES:
 <section class="section"><div class="container two-col"><div class="content">
 <h2>Accounting and tax help in {c["city"]}</h2><p>{c["body"]}</p>
 <p>All work is prepared and reviewed under MF Banda, SARS registered tax practitioner ({PR}), and nothing is submitted to SARS or CIPC without your approval.</p>
-<h2>Areas we serve around {c["city"]}</h2><p>{towns_line}. Not listed? We work remotely with clients anywhere in South Africa.</p>
+{mid_block if "midrand" in c["path"] else ""}<h2>Areas we serve around {c["city"]}</h2><p>{towns_line}. Not listed? We work remotely with clients anywhere in South Africa.</p>
 <h2>Services {c["city"]} clients use most</h2></div>
 <aside class="aside"><div class="card" style="background:var(--navy-900);border-color:var(--navy-900);color:#c9d4ec">
 <h3 style="color:#fff">Free consultation</h3><p style="font-size:.93rem">Remote service for {c["city"]} by phone, WhatsApp or video call.</p>
@@ -935,6 +948,11 @@ for c in CITIES:
 import shutil
 shutil.rmtree(os.path.join(OUT, "insights"), ignore_errors=True)  # generated only; rebuilt from _src/articles
 from urllib.parse import quote as _q
+SUBSCRIBE = ('<form class="subscribe card" novalidate><h3>SARS deadline alerts</h3><p>Short, practical reminders before key SARS and CIPC dates. No spam; unsubscribe any time.</p>'
+  '<div class="sub-row"><label class="sr-only" for="sub-email">Email address</label><input id="sub-email" type="email" name="email" required placeholder="Your email address" autocomplete="email">'
+  '<button class="btn btn-primary" type="submit">Subscribe</button></div>'
+  '<label class="consent"><input type="checkbox" name="consent" value="1" required><span>I agree to receive SARS deadline alerts by email. See the <a href="/privacy/">privacy notice</a>.</span></label>'
+  '<div class="hp" aria-hidden="true"><input name="hp_check" tabindex="-1" autocomplete="off"></div><p class="sub-msg" role="status"></p></form>')
 SHARE = lambda url, t: (f'<div class="share"><span>Share:</span>'
     f'<a href="https://wa.me/?text={_q(t + " " + url)}" target="_blank" rel="noopener" data-track="share_whatsapp">WhatsApp</a>'
     f'<a href="https://www.linkedin.com/sharing/share-offsite/?url={_q(url)}" target="_blank" rel="noopener" data-track="share_linkedin">LinkedIn</a>'
@@ -951,7 +969,7 @@ for i, a in enumerate(ARTICLES):
 <section class="section"><div class="container two-col"><article class="content article">{a["html"]}
 <div class="sources"><h2>Official sources</h2><p>Checked on the publication date. Rules change; always confirm against the source.</p><ul>{srcs}</ul></div>
 {note("General information, not advice", "This article explains general rules. Your position depends on your facts; contact us for advice on your situation.")}
-{SHARE(url, a["title"])}</article>
+{SHARE(url, a["title"])}{SUBSCRIBE}</article>
 <aside class="aside"><div class="card" style="background:var(--navy-900);border-color:var(--navy-900);color:#c9d4ec">
 <h3 style="color:#fff">Need help with this?</h3><p style="font-size:.93rem">{svc["card"]}</p>
 <a class="btn btn-primary" href="/contact/?service={svc["slug"]}" style="margin-top:14px;width:100%;justify-content:center">Book a free consultation</a>
@@ -969,7 +987,7 @@ if ARTICLES:
     ins = hero("Insights", "Tax and compliance insights",
       "Practical guidance on SARS, tax debt, VAT, payroll and business compliance, written and reviewed by a SARS registered tax practitioner and based on official sources.",
       [("Home", "/"), ("Insights", None)], actions=False) + f"""
-<section class="section"><div class="container"><div class="grid g3">{article_cards(ARTICLES)}</div></div></section>{cta()}"""
+<section class="section"><div class="container"><div class="grid g3">{article_cards(ARTICLES)}</div><div style="max-width:720px;margin:36px auto 0">{SUBSCRIBE}</div></div></section>{cta()}"""
     page("/insights/", "Tax &amp; SARS Insights for South Africans | Think Mybiz",
          "Practical, source-checked guidance on SARS letters, objections, tax debt, VAT, payroll and business compliance from a registered tax practitioner.",
          ins, "/insights/", [crumbs_schema([("Home", "/"), ("Insights", "/insights/")])])
@@ -1005,7 +1023,7 @@ with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
         f.write(f"  <url><loc>{DOMAIN}{p}</loc><lastmod>{LM[p]['date']}</lastmod><priority>{pr}</priority></url>\n")
     f.write("</urlset>\n")
 open(os.path.join(OUT, INDEXNOW_KEY + ".txt"), "w").write(INDEXNOW_KEY)
-open(os.path.join(OUT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /_src/\n\nSitemap: {DOMAIN}/sitemap.xml\n")
+open(os.path.join(OUT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /_src/\nDisallow: /portal/\nDisallow: /api/\n\nSitemap: {DOMAIN}/sitemap.xml\n")
 open(os.path.join(OUT, ".htaccess"), "w").write("""Options -Indexes
 RewriteEngine On
 RewriteCond %{HTTPS} !=on
@@ -1014,6 +1032,7 @@ RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]
 RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
 RedirectMatch 404 /\\.(git|gitignore)
 RedirectMatch 404 ^/_src/
+RedirectMatch 404 ^/inc/
 RedirectMatch 404 ^/README\\.md$
 ErrorDocument 404 /404.html
 <IfModule mod_headers.c>

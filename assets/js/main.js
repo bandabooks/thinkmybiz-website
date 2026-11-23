@@ -7,7 +7,36 @@
   var y = document.getElementById("year"); if (y) y.textContent = new Date().getFullYear();
 
   // Lead tracking: sends events to Google Analytics only when it is enabled and the visitor accepted cookies.
-  function track(name, params) { if (typeof window.gtag === "function") window.gtag("event", name, params || {}); }
+  // First-party, cookieless analytics (own server; see /privacy/). Page view, time on page and lead actions.
+  var pvid = Math.random().toString(36).slice(2, 12) + Date.now().toString(36), t0 = Date.now(), hidden = 0, hid = null;
+  function beacon(o) {
+    o.p = location.pathname; var b = JSON.stringify(o);
+    try { if (navigator.sendBeacon && navigator.sendBeacon("/api/t.php", new Blob([b], { type: "text/plain" }))) return; } catch (e) {}
+    try { fetch("/api/t.php", { method: "POST", body: b, keepalive: true }); } catch (e) {}
+  }
+  // Where this visit came from: kept for the visit only (sessionStorage), sent with an enquiry.
+  var attr = null; try { attr = JSON.parse(sessionStorage.getItem("tmb_attr") || "null"); } catch (e) {}
+  var entry = !attr;
+  if (!attr) {
+    var qs = new URLSearchParams(location.search);
+    attr = { s: qs.get("utm_source") || "", m: qs.get("utm_medium") || "", c: qs.get("utm_campaign") || "",
+             r: document.referrer || "", l: location.pathname };
+    if (!attr.s && qs.get("gclid")) { attr.s = "google"; attr.m = "cpc"; }
+    if (!attr.s && qs.get("fbclid")) { attr.s = "facebook"; attr.m = attr.m || "social"; }
+    try { sessionStorage.setItem("tmb_attr", JSON.stringify(attr)); } catch (e) {}
+  }
+  beacon({ t: "pv", id: pvid, e: entry ? 1 : 0, r: document.referrer, us: attr.s, um: attr.m, uc: attr.c });
+  function sendEnd() { if (hid) return; hid = Date.now(); beacon({ t: "end", id: pvid, d: Date.now() - t0 - hidden }); }
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden") sendEnd();
+    else if (hid) { hidden += Date.now() - hid; hid = null; }
+  });
+  window.addEventListener("pagehide", sendEnd);
+  function track(name, params) {
+    if (typeof window.gtag === "function") window.gtag("event", name, params || {});
+    if (typeof window.fbq === "function" && name === "generate_lead") window.fbq("track", "Lead");
+    beacon({ t: "ev", n: name, l: (params && (params.service || params.link_url)) || "" });
+  }
   document.addEventListener("click", function (e) {
     var a = e.target.closest("a, button"); if (!a) return;
     var h = a.getAttribute("href") || "";
@@ -21,7 +50,22 @@
       if (navigator.clipboard) navigator.clipboard.writeText(u).then(function () { a.textContent = "Link copied"; });
     }
   });
-  // Cookie consent (shown only when analytics is configured).
+  // Advertising tags (Meta Pixel, LinkedIn Insight) load only after the visitor accepts cookies.
+  function loadTags() {
+    var T = window.TMB_TAGS || {};
+    if (T.meta && !window.fbq) {
+      !function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = "2.0"; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v;
+        s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s); }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+      window.fbq("init", T.meta); window.fbq("track", "PageView");
+    }
+    if (T.li && !window._linkedin_data_partner_ids) {
+      window._linkedin_partner_id = T.li; window._linkedin_data_partner_ids = [T.li];
+      var sc = document.createElement("script"); sc.async = true; sc.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js"; document.head.appendChild(sc);
+    }
+  }
+  try { if (localStorage.getItem("tmb_consent") === "yes") loadTags(); } catch (e) {}
+  // Cookie consent (shown only when analytics or advertising tags are configured).
   var cb = document.querySelector(".consent-bar");
   if (cb) {
     var seen = null; try { seen = localStorage.getItem("tmb_consent"); } catch (e) {}
@@ -29,10 +73,23 @@
     cb.addEventListener("click", function (e) {
       var b = e.target.closest("[data-consent]"); if (!b) return;
       var v = b.getAttribute("data-consent"); try { localStorage.setItem("tmb_consent", v); } catch (e2) {}
-      if (v === "yes" && typeof window.gtag === "function") window.gtag("consent", "update", { analytics_storage: "granted" });
+      if (v === "yes") { if (typeof window.gtag === "function") window.gtag("consent", "update", { analytics_storage: "granted", ad_storage: "granted", ad_user_data: "granted", ad_personalization: "granted" }); loadTags(); }
       cb.hidden = true;
     });
   }
+
+  // SARS deadline alerts sign-up (double opt-in).
+  document.querySelectorAll("form.subscribe").forEach(function (sf) {
+    sf.addEventListener("submit", function (e) {
+      e.preventDefault(); var msg = sf.querySelector(".sub-msg"), b = sf.querySelector("button");
+      if (!sf.checkValidity()) { sf.reportValidity(); return; }
+      var d = new FormData(sf); d.set("src", location.pathname); b.disabled = true;
+      fetch("/api/subscribe.php", { method: "POST", body: d }).then(function (r) { return r.json(); })
+        .then(function (j) { msg.textContent = j.ok ? j.msg : j.error; msg.className = "sub-msg " + (j.ok ? "ok" : "err"); if (j.ok) { sf.reset(); track("subscribe", {}); } })
+        .catch(function () { msg.textContent = "Could not subscribe right now."; msg.className = "sub-msg err"; })
+        .finally(function () { b.disabled = false; });
+    });
+  });
 
   var f = document.getElementById("enquiry");
   if (!f) return;
@@ -155,11 +212,12 @@
     ok.style.display = "none"; err.style.display = "none";
     if (!f.checkValidity()) { var bad = f.querySelector(":invalid"); if (bad && bad.classList.contains("ss-native")) { bad.dispatchEvent(new Event("invalid")); bad.closest(".ss").querySelector(".ss-btn").focus(); err.textContent = "Please select your province."; err.style.display = "block"; } else f.reportValidity(); return; }
     var d = new FormData(f), b = f.querySelector("button[type=submit]");
+    d.set("attr_source", attr.s); d.set("attr_medium", attr.m); d.set("attr_campaign", attr.c); d.set("attr_ref", attr.r); d.set("attr_landing", attr.l);
     b.disabled = true; b.textContent = "Sending…";
     fetch("/contact.php", { method: "POST", body: d, headers: { "Accept": "application/json" } })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (r) {
-        if (r.ok && r.j.ok) { track("generate_lead", { service: d.get("service"), province: d.get("province") }); f.reset(); if (prov) prov.dispatchEvent(new Event("change")); ok.style.display = "block"; }
+        if (r.ok && r.j.ok) { track("generate_lead", { service: d.get("service"), province: d.get("province") }); f.reset(); if (prov) prov.dispatchEvent(new Event("change")); if (r.j.ref) ok.textContent = "Thank you. Your enquiry has been received (reference " + r.j.ref + "). A confirmation has been emailed to you and we will be in touch."; ok.style.display = "block"; }
         else { err.textContent = (r.j && r.j.error) || "Your message could not be sent."; err.style.display = "block"; }
       })
       .catch(function () { mailtoFallback(d); })

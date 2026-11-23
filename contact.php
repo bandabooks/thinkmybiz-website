@@ -1,54 +1,15 @@
 <?php
 // Think Mybiz Accountants — contact form handler (hand-edited; not generated).
-// Sends website enquiries to the practice mailbox. No data is stored on the server.
-date_default_timezone_set('Africa/Johannesburg'); // before any date() call
+// Emails each enquiry to the practice mailbox and records it, with its reference and source, in the private
+// lead register (outside the web root) for follow-up in the portal. Email delivery never depends on the register.
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 
-$TO   = 'accounts@thinkmybiz.co.za';
-$FROM = 'accounts@thinkmybiz.co.za'; // must be an existing mailbox: Hostinger drops PHP mail from addresses that do not exist
+require __DIR__ . '/inc/core.php';
+$TO   = cfg('email');
+$FROM = cfg('email'); // must be an existing mailbox: Hostinger drops PHP mail from addresses that do not exist
 
 function out($code, $arr) { http_response_code($code); echo json_encode($arr); exit; }
-
-// Authenticated SMTP for accounts@ (better inbox delivery than PHP mail()).
-// Credentials live OUTSIDE the web root and outside Git, in the folder above public_html:
-//   .tmb-smtp.php  ->  <?php return ['host'=>'smtp.hostinger.com','port'=>465,'user'=>'accounts@thinkmybiz.co.za','pass'=>'...'];
-// If that file is absent, mail() is used exactly as before. An SMTP failure is logged and mail() is tried once.
-$SMTP_FILE = dirname(__DIR__) . '/.tmb-smtp.php';
-$SMTP = is_readable($SMTP_FILE) ? (include $SMTP_FILE) : null;
-if (!is_array($SMTP) || empty($SMTP['host']) || empty($SMTP['user']) || !isset($SMTP['pass'])) $SMTP = null;
-
-function smtp_send(array $c, string $to, string $subjectEnc, string $body, array $headers): bool {
-  $ssl = ['verify_peer' => true, 'verify_peer_name' => true, 'peer_name' => $c['host']];
-  if (!empty($c['cafile'])) $ssl['cafile'] = $c['cafile'];
-  $fp = @stream_socket_client('ssl://' . $c['host'] . ':' . (int)($c['port'] ?? 465), $en, $es, 15,
-                              STREAM_CLIENT_CONNECT, stream_context_create(['ssl' => $ssl]));
-  if (!$fp) { error_log("contact.php SMTP connect failed: $es"); return false; }
-  stream_set_timeout($fp, 15);
-  $step = function ($line, array $ok) use ($fp) {
-    if ($line !== null) fwrite($fp, $line . "\r\n");
-    $resp = '';
-    while (($l = fgets($fp, 1024)) !== false) { $resp .= $l; if (strlen($l) < 4 || $l[3] !== '-') break; }
-    if (!in_array((int)substr($resp, 0, 3), $ok, true)) { error_log('contact.php SMTP: ' . trim($resp)); return false; }
-    return true;
-  };
-  $msg = implode("\r\n", array_merge([
-      'Date: ' . date('r'), 'To: <' . $to . '>', 'Subject: ' . $subjectEnc,
-      'Message-ID: <' . bin2hex(random_bytes(12)) . '@thinkmybiz.co.za>', 'MIME-Version: 1.0',
-      'Content-Transfer-Encoding: base64'], $headers)) . "\r\n\r\n" . rtrim(chunk_split(base64_encode($body), 76, "\r\n"));
-  $ok = $step(null, [220]) && $step('EHLO thinkmybiz.co.za', [250]) && $step('AUTH LOGIN', [334])
-     && $step(base64_encode($c['user']), [334]) && $step(base64_encode($c['pass']), [235])
-     && $step('MAIL FROM:<' . $c['user'] . '>', [250]) && $step('RCPT TO:<' . $to . '>', [250, 251])
-     && $step('DATA', [354]) && $step($msg . "\r\n.", [250]);
-  @fwrite($fp, "QUIT\r\n"); fclose($fp);
-  return $ok;
-}
-
-function send_mail(string $to, string $subjectEnc, string $body, array $headers, string $from): bool {
-  global $SMTP;
-  if ($SMTP && smtp_send($SMTP, $to, $subjectEnc, $body, $headers)) return true;
-  return @mail($to, $subjectEnc, $body, implode("\r\n", $headers), '-f' . $from);
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') out(405, ['ok' => false, 'error' => 'Method not allowed.']);
 
@@ -87,21 +48,36 @@ if ($ts > 0 && (round(microtime(true) * 1000) - $ts) < 2000) out(422, ['ok' => f
 
 // Single-line header values only.
 $name1 = preg_replace('/[\n]+/', ' ', $name);
-$SERVICE_LABELS = [
-  'individual-tax' => 'Individual & provisional tax', 'business-tax' => 'Business & trust tax', 'vat' => 'VAT services',
-  'payroll' => 'Payroll & employer taxes', 'sars-disputes' => 'SARS disputes & resolution', 'tax-debt' => 'Tax debt & compliance recovery',
-  'tax-planning' => 'Tax planning & specialist support', 'accounting' => 'Accounting & financial statements',
-  'business-compliance' => 'CIPC, licences & tenders', 'business-advisory' => 'Business advisory',
-  'digital-finance' => 'Digital finance & dashboards', 'expat-tax' => 'Foreign income & expat tax', 'internal-controls' => 'Internal controls review',
-];
+$SERVICE_LABELS = cfg('services');
 if (isset($SERVICE_LABELS[$service])) $service = $SERVICE_LABELS[$service];
 $serv1 = preg_replace('/[\n]+/', ' ', $service ?: 'General enquiry');
 
-$subject = 'Website enquiry: ' . $serv1 . ' — ' . $name1;
+// Where the visitor came from (first page of their visit), captured by the site script.
+$a_src = clean('attr_source', 60); $a_med = clean('attr_medium', 60); $a_cmp = clean('attr_campaign', 100);
+$a_ref = clean('attr_ref', 200);   $a_land = clean('attr_landing', 200);
+$refHost = $a_ref !== '' ? (string)parse_url($a_ref, PHP_URL_HOST) : '';
+list($srcName, $srcMed) = classify_source($a_src, $a_med, $refHost);
+if ($refHost !== '' && stripos($refHost, 'thinkmybiz.co.za') !== false) { $srcName = 'direct'; $srcMed = 'none'; }
+
+$ref = 'TMB-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(2)));
+$leadId = null;
+try {
+  if (rate_limited('enquiry', 8, 3600)) out(429, ['ok' => false, 'error' => 'Too many enquiries from this connection. Please call or WhatsApp 066 210 5631.']);
+  note_attempt('enquiry');
+  db()->prepare('INSERT INTO leads(ref,created_at,updated_at,name,email,phone,province,town,service,message,status,next_follow_up,source,medium,campaign,referrer,landing,device,consent_at)
+                 VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+      ->execute([$ref, now(), now(), $name, $email, $phone, $province, $town, $service ?: 'General enquiry', $message, 'new',
+                 date('Y-m-d'), $srcName, $srcMed, $a_cmp, $refHost, $a_land, device_class($_SERVER['HTTP_USER_AGENT'] ?? ''), now()]);
+  $leadId = (int)db()->lastInsertId();
+} catch (Throwable $e) { error_log('contact.php lead register: ' . $e->getMessage()); }
+
+$subject = 'Website enquiry ' . $ref . ': ' . $serv1 . ' — ' . $name1;
 $body = "New enquiry from thinkmybiz.co.za\n\n"
       . "Name: $name1\nEmail: $email\nPhone: $phone\nProvince: $province\nTown/village: $town\nService: $serv1\n"
       . "Received: " . date('Y-m-d H:i') . " (SAST)\n\nMessage:\n$message\n\n"
-      . "The sender consented to their details being used to respond to this enquiry (POPIA).\n";
+      . "Source: $srcName / $srcMed" . ($a_cmp !== '' ? " (campaign: $a_cmp)" : '') . "\nLanding page: $a_land\n"
+      . "Reference: $ref\n" . ($leadId ? "Open in portal: " . cfg('domain') . "/portal/?p=lead&id=$leadId\n" : "Note: the lead register was unavailable; this email is the only record.\n")
+      . "\nThe sender consented to their details being used to respond to this enquiry (POPIA).\n";
 
 $headers = [
   'From: Think Mybiz Website <' . $FROM . '>',
@@ -109,16 +85,17 @@ $headers = [
   'Content-Type: text/plain; charset=UTF-8',
   'X-Mailer: thinkmybiz.co.za',
 ];
-$sent = send_mail($TO, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers, $FROM);
+$sent = send_mail_raw($TO, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers);
+if ($leadId) { try { db()->prepare('UPDATE leads SET email_sent=? WHERE id=?')->execute([$sent ? 1 : 0, $leadId]); } catch (Throwable $e) {} }
 
-if (!$sent) out(500, ['ok' => false, 'error' => 'Your message could not be sent. Please email accounts@thinkmybiz.co.za or call 066 210 5631.']);
+if (!$sent && !$leadId) out(500, ['ok' => false, 'error' => 'Your message could not be sent. Please email accounts@thinkmybiz.co.za or call 066 210 5631.']);
 
 // Automatic acknowledgement to the enquirer (one email; no marketing). Failure here does not affect the enquiry.
 $ACK_ENABLED = true;
 if ($ACK_ENABLED) {
   $first = trim(explode(' ', $name1)[0]);
   $ack = "Dear " . ($first !== '' ? $first : 'Sir/Madam') . ",\n\n"
-       . "Thank you for contacting Think Mybiz Accountants & Tax Practitioners. We have received your enquiry about \"$serv1\". We will be in touch to arrange your free consultation.\n\n"
+       . "Thank you for contacting Think Mybiz Accountants & Tax Practitioners. We have received your enquiry about \"$serv1\" (reference $ref). We will be in touch to arrange your free consultation.\n\n"
        . "If your matter concerns a SARS letter or assessment, please reply to this email with the date you received it and the tax type and period. "
        . "Ask us for a secure route before sending identity numbers or sensitive documents.\n\n"
        . "Telephone / WhatsApp: 066 210 5631\nEmail: accounts@thinkmybiz.co.za\nWebsite: https://thinkmybiz.co.za\n\n"
@@ -131,6 +108,7 @@ if ($ACK_ENABLED) {
     'Auto-Submitted: auto-replied',
     'X-Mailer: thinkmybiz.co.za',
   ];
-  send_mail($email, '=?UTF-8?B?' . base64_encode('We received your enquiry — Think Mybiz Accountants') . '?=', $ack, $ackHeaders, $FROM);
+  send_mail_raw($email, '=?UTF-8?B?' . base64_encode('We received your enquiry (' . $ref . ') — Think Mybiz Accountants') . '?=', $ack, $ackHeaders);
+  if ($leadId) { try { db()->prepare('INSERT INTO lead_notes(lead_id,created_at,kind,body) VALUES(?,?,?,?)')->execute([$leadId, now(), 'email', 'Automatic acknowledgement sent to ' . $email]); } catch (Throwable $e) {} }
 }
-out(200, ['ok' => true]);
+out(200, ['ok' => true, 'ref' => $ref]);

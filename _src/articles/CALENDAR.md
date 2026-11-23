@@ -13,12 +13,15 @@ The weekly article task takes the first topic marked `next` (or the first `plann
 | 7 | EMP501 reconciliation: fixing mismatches before SARS does | payroll | published |
 | 8 | CSD registration step by step for small businesses | business-compliance | published |
 | 9 | Request for remission of penalties: when it works | sars-disputes | published |
-| 10 | Travel logbook requirements SARS accepts | individual-tax | next |
-| 11 | CIPC annual returns: deadlines and penalties | business-compliance | planned |
-| 12 | When must a business register for VAT? | vat | planned |
+| 10 | Travel logbook requirements SARS accepts | individual-tax | published |
+| 11 | CIPC annual returns: deadlines and penalties | business-compliance | next |
+| 12 | When must a business register for VAT? | vat | published |
 | 13 | Ceasing South African tax residency: what it means and what SARS needs | expat-tax | planned |
 | 14 | Working abroad: the foreign employment income exemption explained | expat-tax | planned |
 | 15 | Six internal controls every small business should have | internal-controls | planned |
 | 16 | Moving your books online: what changes and what to prepare | digital-finance | planned |
+| 17 | Provisional tax: the February IRP6, the 80%/90% rule and penalties | individual-tax | published |
+| 18 | Turnover tax after the R2.3 million increase: is it right for you? | business-tax | planned |
+| 19 | SARS auto-assessment: check it before you accept | individual-tax | planned |
 
 Seasonal rule: ahead of SARS filing season, provisional tax due dates and the EMP501 windows, move the matching topic up, with dates checked on sars.gov.za for that year.

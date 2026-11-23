@@ -41,3 +41,27 @@ The build stops with an error if any page title is over 60 characters or a descr
 ## Content source
 
 *Think Mybiz Accountants and Tax Practitioners — Business Profile 2026*. Do not add clients, testimonials, prices, figures or claims that are not in the profile or confirmed by MF Banda.
+
+## Lead system and practice portal (added 23 Nov 2026)
+
+| Part | Where | What it does |
+| --- | --- | --- |
+| Lead register | `contact.php` + `inc/core.php` | Every enquiry is emailed **and** saved with a reference (TMB-yymmdd-XXXX) and its source (UTM / referrer / landing page). Email delivery never depends on the database. |
+| Private data | `../.tmb-data/tmb.sqlite` (outside `public_html`, outside Git) | Leads, notes, visit statistics, subscribers, settings, audit log. Created automatically. Backed up with the hosting account; the portal also offers a download. |
+| Visit statistics | `api/t.php`, `assets/js/main.js` | Cookieless page views, time on page, lead actions. No IP stored (daily-rotating salted hash). Respects DNT / GPC. Bots ignored. |
+| Alerts sign-up | `api/subscribe.php`, `confirm.php`, `unsubscribe.php` | Double opt-in list for SARS deadline alerts. |
+| Portal | `/portal/` | Dashboard, lead pipeline and follow-ups, email replies (templates + AI drafts), tracked campaign links with QR codes, social post drafts (Facebook Page publishing optional), subscribers, settings, audit log. |
+| Daily summary | `portal/cron.php` (hosting cron, 07:00) | Emails new leads, follow-ups due and yesterday's traffic to the practice mailbox. |
+
+Security: one-time setup/reset links go only to the practice mailbox; passwords hashed; optional TOTP two-step sign-in; login rate-limited; CSRF on every form; strict CSP; session idle timeout 1 hour; `/inc/` blocked; portal and API send `noindex`.
+
+Nothing is sent to a client or posted to social media unless the practitioner clicks the button. AI output is a draft only.
+
+Advertising tags (`GA_ID`, `META_PIXEL`, `LINKEDIN_PARTNER` in `build.py`) load only after cookie consent.
+
+### Reusing for another practice
+
+1. Copy the repository.
+2. Change the constants at the top of `_src/build.py` (name, contacts, addresses, services) and `inc/config.php`.
+3. Replace the logo files in `assets/img/` and rewrite the articles in `_src/articles/`.
+4. Build, deploy, open `/portal/` and use "Email me the link" to set up the owner account.

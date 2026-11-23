@@ -6,6 +6,7 @@ RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
 RedirectMatch 404 /\.(git|gitignore)
 RedirectMatch 404 ^/_src/
+RedirectMatch 404 ^/inc/
 RedirectMatch 404 ^/README\.md$
 ErrorDocument 404 /404.html
 <IfModule mod_headers.c>
