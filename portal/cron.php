@@ -1,5 +1,5 @@
 <?php
-// Daily job (run from the hosting cron at 07:00 SAST): emails the practice a summary of new leads, follow-ups due and yesterday's visits.
+// Daily job (hosting cron runs it hourly; it sends once a day from 07:00 SAST): emails the practice a summary of new leads, follow-ups due and yesterday's visits.
 // Command-line only; returns 404 if opened in a browser.
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 require dirname(__DIR__) . '/inc/core.php';
@@ -12,6 +12,8 @@ if (in_array('--check', $argv, true)) {   // health check: prints environment fa
   exit(0);
 }
 if (setting('digest_on', '1') !== '1') exit(0);
+// Runs hourly; sends once a day at the first run from 07:00 SAST, whatever the server's own time zone.
+if ((int)date('G') < 7 && !in_array('--force', $argv, true)) exit(0);
 $today = date('Y-m-d'); $y = date('Y-m-d', strtotime('-1 day'));
 if (setting('digest_last') === $today && !in_array('--force', $argv, true)) exit(0);
 $q = function ($sql, $a = []) { $s = db()->prepare($sql); $s->execute($a); return $s; };
