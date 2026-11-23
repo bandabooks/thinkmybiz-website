@@ -3,6 +3,14 @@
 // Command-line only; returns 404 if opened in a browser.
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 require dirname(__DIR__) . '/inc/core.php';
+if (in_array('--check', $argv, true)) {   // health check: prints environment facts, sends nothing
+  echo 'PHP ' . PHP_VERSION . ' | sqlite ' . (class_exists('PDO') && in_array('sqlite', PDO::getAvailableDrivers(), true) ? 'yes' : 'NO') . ' | curl ' . (function_exists('curl_init') ? 'yes' : 'NO') . "\n";
+  echo 'data dir ' . cfg('data_dir') . ' writable: ' . (is_writable(data_dir()) ? 'yes' : 'NO') . "\n";
+  echo 'db tables: ' . db()->query("SELECT COUNT(*) FROM sqlite_master WHERE type='table'")->fetchColumn() . ' | sqlite ' . db()->query('select sqlite_version()')->fetchColumn() . "\n";
+  echo 'leads ' . db()->query('SELECT COUNT(*) FROM leads')->fetchColumn() . ' | pageviews ' . db()->query('SELECT COUNT(*) FROM pageviews')->fetchColumn() . ' | users ' . db()->query('SELECT COUNT(*) FROM users')->fetchColumn() . "\n";
+  echo 'timezone ' . date('Y-m-d H:i T') . "\n";
+  exit(0);
+}
 if (setting('digest_on', '1') !== '1') exit(0);
 $today = date('Y-m-d'); $y = date('Y-m-d', strtotime('-1 day'));
 if (setting('digest_last') === $today && !in_array('--force', $argv, true)) exit(0);
